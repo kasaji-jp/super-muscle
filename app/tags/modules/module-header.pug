@@ -3,11 +3,13 @@ module-header
   div.bg-white.h44.box-shadow.relative
     div.container.s-full.f.fh.relative
       div.bold.fs16
-        a.block(href='/') { opts.title || 'chat' }
+        a.block.font-impact.text-main(href='/') { opts.title || 'SUPER MUSCLE' }
       div.absolute.t0.l0.h-full.f.fh.px10.cursor-pointer(if='{opts.back}', onclick='{back}')
         i.icon-arrow_left.fs28
       div.absolute.t0.l0.h-full.f.fh.px10.cursor-pointer(if='{opts.close}', onclick='{close}')
         i.material-icons close
+      div.absolute.t0.r0.h-full.f.fh.px10.cursor-pointer.text-main(if='{opts.add}', onclick='{openModal}')
+        i.material-icons add
 
   style(type='less').
     :scope {
@@ -23,5 +25,9 @@ module-header
     };
     this.close = () => {
       typeof this.opts.close === 'function' ? this.opts.close() : spat.nav.back();
+    };
+
+    this.openModal = () => {
+      this.parent.trigger('openModal');
     };
     
