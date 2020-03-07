@@ -1,0 +1,46 @@
+item-training
+  div.p20.rounded-10.bg-white.box-shadow.mb20
+    div.f.flex-between.fm.border-bottom.bw3.mb8.pb8
+      div.bold.fs18.flex-fixed {opts.item.label}
+      div.f.fh.cursor-pointer(if='{isDone}', onclick='{edit}')
+        i.icon-pen.text-sub.fs18
+    form(onsubmit='{done}')
+      div.f.flex-between.mb20
+        div.w-full
+          div.f.fb.mb6
+            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', type='tel', value='{data.weight}', ref='weight', required)
+            div.fs32.pl40.bold.w100(if='{isDone}') {data.weight}
+            p.fs12 kg
+          div.f.fb.mb6
+            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', type='tel', value='{data.rep}', ref='rep', required)
+            div.fs32.pl40.bold.w100(if='{isDone}') {data.rep}
+            p.fs12 回
+          div.f.fb.mb6
+            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', type='tel', value='{data.set}', ref='set', required)
+            div.fs32.pl40.bold.w100(if='{isDone}') {data.set}
+            p.fs12 セット
+        div.s100.f.fh
+          img.object-fit-cover(src='{opts.item.image}')
+      button.p10.rounded-full.f.fh.w200.mxa(class='bg-{isDone ? "palegray" : "sub"} {"cursor-pointer" : !isDone}', onsubmit='{done}', type='submit')
+        span.bold.fs18.text-white.font-impact done!
+
+  script.
+    this.on('mount', () => {
+      this.isDone = false;
+    });
+
+    this.done = () => {
+      this.isDone = !this.inDone;
+      this.data = {
+        weight: this.refs.weight.value,
+        rep: this.refs.rep.value,
+        set: this.refs.set.value,
+      };
+      spat.modal.alert('Well done!!');
+      this.update();
+    };
+
+    this.edit = () => {
+      this.isDone = !this.isDone;
+      this.update();
+    };
