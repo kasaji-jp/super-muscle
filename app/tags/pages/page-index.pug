@@ -1,55 +1,30 @@
 page-index
+  //- todo-タイマー機能実装
   div.flex.flex-column.h-full
-    module-header
+    module-header(title="TODAY'S WORK OUT", add='{true}')
     div.h-full.overflow-scroll(ref='body')
-      div.container
-        div.posts
-          div.m16(data-is='item-chat', each='{item in sclazy.items}', item='{item}')
-          //- div.text-center.my16(if='{sclazy.isMore()}') loading...
+      div.s-full.f.fh.py20(if='{!todays_menu}') 筋トレしろ
+      div.container.px20.pt20
+        div(each='{item in todays_menu}', if='{todays_menu.length > 0}', data-is='item-training', item='{item}')
     module-tabbar
 
   script.
-    //- this.fetch = async ({app, modules}) => {
-    //-   console.log('fetch');
-    //-   if (this.posts) return {};
-    //-   var posts = await modules.app.ref.child('posts').get();
-    //-   return {
-    //-     posts: posts.splice(0, 10),
-    //-   };
-    //- };
-
     this.on('mount', async () => {
-      this.sclazy = Sclazy({
-        target: this.refs.body,
-        onload: async () => {
-          var limit = 16;
-          var startAfter = null;
-
-          if (this.sclazy.items.length) {
-            //- 続きから取得するようにする
-            startAfter = this.sclazy.items[this.sclazy.items.length - 1].doc;
-          }
-          var items = await app.store.groups.index({
-            user_id: firebase.auth().getUid(),
-            limit: limit,
-            startAfter: startAfter,
-          });
-
-          this.sclazy.addItems(items);
-          this.sclazy.next(items.length !== 0);
-          this.update();
-        },
-        //- スクロールし終わった時
-        onscrollend: () => {
-          this.sclazy.load();
-        },
-      });
+      this.todays_menu = [];
     });
-    
-    this.on('show', async () => {
-      this.sclazy.reset().load();
-      this.update();
 
-      //- var base64 = await app.utils.imageToBase64(faker.image.image());
-      //- firebase.storage().ref('hoge/foo').child('test').putString(image, 'base64', {contentType:'image/jpg'});
+    this.on('openModal', ()=> {
+      var modal = spat.modal.open('modal-menu-select', {contents: this.todays_menu});
+      modal.on('add', (item) => {
+        if (item.length > 1) {
+          item.forEach(item => {
+            this.todays_menu.push(item);
+          });
+        } else {
+          this.todays_menu.push(item[0]);
+        }
+        spat.modal.alert('追加しました');
+        modal.close();
+        this.update();
+      });
     });
