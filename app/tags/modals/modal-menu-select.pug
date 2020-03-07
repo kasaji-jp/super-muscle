@@ -1,0 +1,254 @@
+modal-menu-select(spat-animation='bottom')
+  div.s-full.bg-maingray.f.flex-column(ref='modal')
+    module-header.flex-fixed(title='SELECT TRAINING', close='{close}')
+    div.f.fc.w-full.py20
+      div.s8.circle.mx4(each='{page, i in pages}', class='{current === i ? "bg-main" : "bg-deepgray"}')
+    div.f.overflow-hidden.h-full(ref='flickTarget')
+      div.w-full.flex-fixed.f.flex-column(each='{page, i in pages}')
+        div.text-center.mb30
+          span.text-main.border-bottom.border-main.bw4.pb4.fw6 {page.title}
+        div.h-full.overflow-scroll(if='{i === 0}')
+          div(data-is='item-workout-list', each='{item in dummies}', item='{item}', selected_items='{selectedItems}', added='{added}')
+        div.h-full.overflow-scroll(if='{i === 1}')
+          div(data-is='item-workout-list', each='{item in mylist}', item='{item}', selected_items='{selectedItems}', added='{added}', type='mylist')
+        div.h-full.overflow-scroll(if='{i === 2}')
+          div(data-is='item-workout-list', each='{item in dummies}', item='{item}', selected_items='{selectedItems}', added='{added}')
+    div.w-full.f.fh.py10
+      button.button.bg-main.w200.mxa.p20.rounded-full.text-white.bold.font-impact(onclick='{add}') add
+
+
+  script.
+    this.pages = [
+      {title: '最近のトレーニング'},
+      {title: '自分のメニュー'},
+      {title: 'さがす'},
+    ];
+
+    this.dummies = {
+      arms: {
+        label: '腕',
+        image: '/static/images/sample.png',
+        contents: [
+          {
+            label: 'コンセントレーションカール',
+            image: '/static/images/sample.png',
+            history: {
+              day: '2020/3/4',
+              weight: '35kg',
+              rep: '10',
+              set: '4',
+            },
+          },
+          {
+            id: '1',
+            label: 'インクラインカール',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '2',
+            label: 'ダンベルカール',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '3',
+            label: 'アームカール',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '4',
+            label: 'ダンベルフレンチプレス',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '5',
+            label: 'トライセップスキックバック',
+            image: '/static/images/sample.png',
+          },
+        ],
+      },
+      chest: {
+        label: '胸筋',
+        image: '/static/images/sample.png',
+        contents: [
+          {
+            id: '6',
+            label: 'ベンチプレス',
+            image: '/static/images/sample.png',
+            history: {
+              day: '2020/3/4',
+              weight: '35kg',
+              rep: '10',
+              set: '4',
+            },
+          },
+          {
+            id: '7',
+            label: 'インクラインダンベルプレス',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '8',
+            label: 'ダンベルフライ',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '9',
+            label: 'ダンベルプルオーバー',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '10',
+            label: 'インクラインベンチプレス',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '11',
+            label: 'フライ',
+            image: '/static/images/sample.png',
+          },
+        ],
+      },
+      abdominals: {
+        label: '腹筋',
+        image: '/static/images/sample.png',
+        contents: [
+          {
+            id: '12',
+            label: 'ウェイテッドクランチ',
+            image: '/static/images/sample.png',
+            history: {
+              day: '2020/3/4',
+              weight: '35kg',
+              rep: '10',
+              set: '4',
+            },
+          },
+          {
+            id: '13',
+            label: 'サイドべント',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '14',
+            label: 'シットアップ',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '15',
+            label: 'アブローラー',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '16',
+            label: 'アブクランチ',
+            image: '/static/images/sample.png',
+          },
+        ],
+      },
+    };
+
+    this.mylist = {
+      big3: {
+        label: 'ビッグ3',
+        contents: [
+          {
+            id: '6',
+            label: 'ベンチプレス',
+            image: '/static/images/sample.png',
+            history: {
+              day: '2020/3/4',
+              weight: '35kg',
+              rep: '10',
+              set: '4',
+            },
+          },
+          {
+            id: '17',
+            label: 'スクワット',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '18',
+            label: 'デッドリフト',
+            image: '/static/images/sample.png',
+          },
+        ],
+      },
+      mychestlist: {
+        label: 'my胸筋セット',
+        contents: [
+          {
+            id: '6',
+            label: 'ベンチプレス',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '10',
+            label: 'インクラインベンチプレス',
+            image: '/static/images/sample.png',
+          },
+          {
+            id: '8',
+            label: 'ダンベルフライ',
+            image: '/static/images/sample.png',
+          },
+        ],
+      },
+    };
+
+    this.on('mount', async() => {
+      if(this.opts.contents.length > 0) {
+        this.added = this.opts.contents;
+        this.update();
+      }
+      this.selectedItems = [];
+      this.current = 0;
+      var target = this.refs.flickTarget;
+      //- 暫定対応
+      setTimeout(() => {
+        this.BASE_WIDTH = target.offsetWidth;
+      }, 512);
+      this.flickable = window.flickable(target, {distance: 10, axis: 'x'});
+      this.flickable.on('move', (e) => {
+        target.scrollLeft -= e.dx;
+      });
+      this.flickable.on('end', (e) => {
+        var rate = e.dx / 5 + e.mx / (this.BASE_WIDTH * 0.5);
+        if (rate >= 1 && this.current >= 1 ) {
+          this.current--;
+        } 
+        else if (rate <= -1 && this.current <= this.pages.length - 2)  {
+          this.current++;
+        }
+        this.update();
+        $(target).stop().animate({scrollLeft : this.BASE_WIDTH * this.current}, 256);
+      });
+    });
+
+
+    //- 選択中のアイテムを格納
+    this.toggleItems = (items, todo) => {
+      if (todo === 'add') {
+        if (items.length > 1) {
+          items.forEach(item => {
+            this.selectedItems.push(item);
+          });
+        } else {
+          this.selectedItems.push(items);
+        }
+      } else {
+        if (items.length > 1) {
+          items.forEach(item => {
+            this.selectedItems = this.selectedItems.filter(added => added.id !== item.id);
+          });
+        } else {
+          this.selectedItems = this.selectedItems.filter(added => added.id !== items.id);
+        }
+      }
+      this.selectedItems = _.uniq(this.selectedItems, (item) => item.id);
+      this.update();
+    };
+
+    this.add = () => {
+      this.trigger('add', this.selectedItems);
+    };

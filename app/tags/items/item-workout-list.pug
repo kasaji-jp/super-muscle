@@ -1,0 +1,122 @@
+item-workout-list
+  div.w-full.cursor-pointer
+    div.bg-palegray.w-full.border.text-black.f.fm.py10.px20.relative(onclick='{toggleList}')
+      div.absolute.trbl0.f.fh.bg-clearblack.z2(if='{opts.item.disabled}')
+        span.text-white.fs18.bold 登録済み
+      img.block.s30.mr40(src='{opts.item.image}', if='{opts.item.image}')
+      div.fs18.bold {opts.item.label}
+      div.absolute.t0.r0.h-full.f.fh.px10.transition(if='{!opts.type}', class='rotate{open ? "-n90deg" : "90deg"}')
+        i.icon-arrow_right
+      div.absolute.t0.r0.h-full.f.fh.px10(if='{opts.type}', onclick='{updateList}')
+        div.s20.f.fh(class='bg-{isSelectedList ? "sub" : "deepgray"}')
+          i.icon-check_stroke.text-white
+    div.transition.max-h0.overflow-hidden(ref='excercises')
+      div(ref='body')
+        div.f.flex-between.fm.p6.w-full.px20.py10.border-bottom.relative(each='{content in opts.item.contents}', onclick='{updateItems}')
+          div.f
+            img.block.s30.mr20(src='{content.image}')
+            div
+              div {content.label}
+              div.f.text-deepgray.fs8.px2(if='{content.history}')
+                p.mr6 {content.history.day}
+                p.mr6 {content.history.weight}
+                p {content.history.rep}回×{content.history.set}セット
+          div.s20.f.fh(class='bg-{content.selected ? "sub" : "deepgray"}')
+            i.icon-check_stroke.text-white
+          div.absolute.trbl0.f.fh.bg-clearblack(if='{content.disabled}')
+            span.text-white.fs18.bold 登録済み
+
+  script.
+    this.on('mount', () => {
+      this.open = false;
+      this.isSelectedList = false;
+      this.isSelectedItem = false;
+      if (this.opts.added && this.opts.added.length > 0) {
+        var addedIds = this.opts.added.map(item => item.id);
+        this.opts.item.contents.forEach(item => {
+          addedIds.forEach(id => {
+            if(id === item.id) {
+              item.disabled = true;
+              item.selected = true;
+            }
+          });
+        });
+        if (opts.type) {
+          //- mylistのitem全部がdisabledの時はlistもdisabledする
+          var disabledInList = this.opts.item.contents.filter(item => item.disabled);
+          if (disabledInList.length === this.opts.item.contents.length) {
+            this.opts.item.disabled = true;
+            this.isSelectedList = true;
+          }
+        }
+      }
+    });
+
+    this.on('update', ()=> {
+      //- modal内の他のitemで選択済みの項目を選択済みに
+      if (this.opts.selected_items.length > 0) {
+        var selectedIds = this.opts.selected_items.map(item => item.id);
+        this.opts.item.contents.forEach(item => {
+          //- 一旦全部の選択状態をリセット
+          if (!item.disabled) {
+            item.selected = false;
+            selectedIds.forEach(id => {
+              if (id === item.id) {
+                item.selected = true;
+              }
+            });
+          }
+        });
+        //- リストのアイテム選択状況に応じてリストの表示に反映
+        if (this.opts.type && !this.opts.item.disabled) {
+          var sortedContents = this.opts.item.contents;
+          selectedIds.forEach(id => {
+            sortedContents = sortedContents.filter(item => item.id !== id);
+          });
+          var disabledId = this.opts.item.contents.filter(item => item.disabled).map(item => item.id);
+          disabledId.forEach(id => {
+            sortedContents = sortedContents.filter(item => item.id !== id);
+          });
+          if (sortedContents.length !== this.opts.item.contents.length && sortedContents.length !== 0) {
+            this.isSelectedList = false;
+          } else if (sortedContents.length === 0) {
+            this.isSelectedList = true;
+          }
+        }
+      }
+    });
+
+    //- リストの開閉
+    this.toggleList = () => {
+      this.open = !this.open;
+      if (this.open) {
+        this.refs.excercises.style.maxHeight = getComputedStyle(this.refs.body).height;
+      } else {
+        this.refs.excercises.style.maxHeight = 0;
+      }
+      this.update();
+    };
+
+    //- list全体の選択
+    this.updateList = (e) => {
+      e.stopPropagation();
+      this.isSelectedList = !this.isSelectedList;
+      var itemToSelect = this.opts.item.contents.filter(item => !item.disabled);
+      this.parent.toggleItems(itemToSelect, (this.isSelectedList ? 'add' : 'reduce') );
+      this.opts.item.contents.forEach(item => {
+        if(item.disabled) return;
+        if (this.isSelectedList) {
+          item.selected = true;
+        } else {
+          item.selected = false;
+        }
+      });
+      this.update();
+    };
+
+    //- item単体の変更
+    this.updateItems = (e) => {
+      if (e.item.content.disabled) return;
+      e.item.content.selected = !e.item.content.selected;
+      this.parent.toggleItems(e.item.content, (e.item.content.selected ? 'add' : 'reduce'));
+    };
