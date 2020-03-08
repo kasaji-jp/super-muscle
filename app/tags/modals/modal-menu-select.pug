@@ -1,5 +1,5 @@
 modal-menu-select(spat-animation='bottom')
-  div.s-full.bg-maingray.f.flex-column(ref='modal')
+  div.s-full.bg-maingray.f.flex-column.relative(ref='modal')
     module-header.flex-fixed(title='SELECT TRAINING', close='{close}')
     div.f.fc.w-full.py20
       div.s8.circle.mx4(each='{page, i in pages}', class='{current === i ? "bg-main" : "bg-deepgray"}')
@@ -13,8 +13,7 @@ modal-menu-select(spat-animation='bottom')
           div(data-is='item-workout-list', each='{item in mylist}', item='{item}', selected_items='{selectedItems}', added='{added}', type='mylist')
         div.h-full.overflow-scroll(if='{i === 2}')
           div(data-is='item-workout-list', each='{item in dummies}', item='{item}', selected_items='{selectedItems}', added='{added}')
-    div.w-full.f.fh.py10
-      button.button.bg-main.w200.mxa.p20.rounded-full.text-white.bold.font-impact(onclick='{add}') add
+    button.absolute.z2.r0.l0.b10.mxa.button.bg-main.w200.p20.rounded-full.text-white.bold.font-impact(onclick='{add}') add
 
 
   script.
@@ -30,6 +29,7 @@ modal-menu-select(spat-animation='bottom')
         image: '/static/images/sample.png',
         contents: [
           {
+            id: '0',
             label: 'コンセントレーションカール',
             image: '/static/images/sample.png',
             history: {
@@ -249,6 +249,7 @@ modal-menu-select(spat-animation='bottom')
       this.update();
     };
 
-    this.add = () => {
+    this.add = (e) => {
+      e.stopPropagation();
       this.trigger('add', this.selectedItems);
     };

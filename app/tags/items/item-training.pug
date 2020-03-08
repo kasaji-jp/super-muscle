@@ -29,7 +29,8 @@ item-training
       this.isDone = false;
     });
 
-    this.done = () => {
+    this.done = (e) => {
+      e.preventDefault();
       this.isDone = !this.inDone;
       this.data = {
         weight: this.refs.weight.value,
