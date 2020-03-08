@@ -3,9 +3,10 @@ page-index
   div.flex.flex-column.h-full
     module-header(title="TODAY'S WORK OUT", add='{true}')
     div.h-full.overflow-scroll(ref='body')
-      div.s-full.f.fh.py20(if='{!todays_menu}') 筋トレしろ
+      div.s-full.f.fh.py20(if='{!todays_menu.length > 0}') 筋トレしろ
       div.container.px20.pt20
-        div(each='{item in todays_menu}', if='{todays_menu.length > 0}', data-is='item-training', item='{item}')
+        div(data-is='atom-removable', each='{item in todays_menu}', if='{todays_menu.length > 0}', item='{item}')
+          div(data-is='item-training', item='{opts.item}')
     module-tabbar
 
   script.
@@ -28,3 +29,9 @@ page-index
         this.update();
       });
     });
+
+    this.remove = (item) => {
+      this.todays_menu = this.todays_menu.filter(menu => menu.id !== item.id);
+      spat.modal.alert('削除しました');
+      this.update();
+    };

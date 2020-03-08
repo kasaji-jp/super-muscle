@@ -1,0 +1,44 @@
+atom-removable
+  div.z1.relative.transition(ref='item')
+    #{'yield'}
+  div.f.h-full.text-center.text-white.cursor-pointer.z0.absolute.r0.t0.bg-danger.r-rounded-10
+    //- 見た目調整用
+    div.w200.h-full
+    div.bold.px20.f.fh(if='{opts.removable !== false}', ref='removeButton', onclick='{remove}') 削除
+
+  style(type='less').
+    :scope {
+      display: block;
+      position: relative;
+      z-index: 0;
+    }
+
+  script.
+    this.on('mount', () => {
+      this.flickable = window.flickable(this.refs.item, {axis: 'x'});
+      this.flickable.on('move', e => {
+        // 指を左側に移動するか、削除ボタンが出ている場合はスワイプバックしないようにする
+        if (e.mx < 0 || this.moving) {
+          e.preventDefault();
+        }
+        var distance = Math.max(-this.refs.removeButton.offsetWidth, Math.min(e.mx, 0));
+
+        this.update();
+        this.refs.item.style.transform = `translateX(${distance}px)`;
+      });
+      this.flickable.on('end', e => {
+        if (Math.abs(e.mx) < Math.abs(e.my)) return;
+        var rate = e.dx / 5 + e.mx / 68;
+        console.log(rate);
+        if (rate < -1) {
+          this.refs.item.style.transform = `translateX(${-this.refs.removeButton.offsetWidth}px)`;
+        } else if (rate > 1) {
+          this.refs.item.style.transform = 'translateX(0px)';
+        }
+        this.update();
+      });
+    });
+
+    this.remove = () => {
+      this.parent.remove(this.opts.item);
+    };
