@@ -18,15 +18,15 @@ html
       
       // version があればそのバージョンに応じたフォルダを参照するようにする
       if (version) {
-        document.write('<scri' + 'pt src="/plugins/cordova/' + uuaa.os.name.toLowerCase() + '/' + version + '/cordova.js"></scrip' + 't>');
+        document.write('<scri' + 'pt src="/static/plugins/cordova/' + uuaa.os.name.toLowerCase() + '/' + version + '/cordova.js"></scrip' + 't>');
       }
       else {
-        document.write('<scri' + 'pt src="/plugins/cordova/' + uuaa.os.name.toLowerCase() + '/cordova.js"></scrip' + 't>');
+        document.write('<scri' + 'pt src="/static/plugins/cordova/' + uuaa.os.name.toLowerCase() + '/cordova.js"></scrip' + 't>');
       }
       
     }
     else {
       if (uuaa.cordova) {
-        document.write('<scri' + 'pt src="/plugins/cordova/' + uuaa.os.name.toLowerCase() + '/cordova.js"></scrip' + 't>');
+        document.write('<scri' + 'pt src="/static/plugins/cordova/' + uuaa.os.name.toLowerCase() + '/cordova.js"></scrip' + 't>');
       }
     }
