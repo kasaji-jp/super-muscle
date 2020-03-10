@@ -35,7 +35,7 @@ spalate:
     platforms:
       - ios
       - android
-    target: 'test-app'
+    target: '../super-muscle-app'
     output: 'public/plugins/cordova'
     
 client:
