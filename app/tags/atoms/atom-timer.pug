@@ -1,0 +1,66 @@
+atom-timer
+  //- timer部分
+  div.bg-white.rounded-10.bg-white.box-shadow-inset.p20.mb20(ref='timerBlock')
+    div.s160.circle.overflow-hidden.mxa.relative.mb20(ref='timerBody')
+      div.absolute.s-full.bg-sub(ref='base_sub')
+      div.absolute.l50per.t0.h-full.w80.bg-softgray.z2.trans-origin-l(ref='rotating_gray')
+      div.absolute.l50per.t0.h-full.w80.bg-sub.z3(ref='right_sub')
+      div.absolute.r50per.t0.h-full.w80.bg-softgray.opacity-0(ref='left_gray')
+      //- 時間表示部分
+      div.absolute.s150.circle.t5.l5.bg-white.z100.f.fh
+        span.fs20 {m}:{s}
+    div.w-full.f.fc.fm
+      button.button.rounded-10.bg-primary.text-white.mr10(onclick='{startTimer}') start
+      button.button.rounded-10.bg-main.text-white.mr10(onclick='{stop}') stop
+      button.button.rounded-10.bg-sub.text-white cancel
+
+  
+  script.
+    this.time = ['0', '10'];
+    this.m = this.time[0].padStart(2, '0');
+    this.s = this.time[1].padStart(2, '0');
+
+    this.startTimer = () => {
+      if (this.isStarted) return;
+      this.startTime = Date.now();
+      var duration = {
+        m: +this.time[0],
+        s: +this.time[1],
+      }
+      this.isStarted = true;
+      this.countDown(duration);
+    };
+
+    this.countDown = (duration) => {
+      if (this.timeLeft <= 0) {
+        this.m = '00';
+        this.s = '00';
+        this.update();
+        this.isStarted = false;
+        return;
+      }
+      var setDuration = (duration.m * 60 + duration.s) * 1000;
+      this.timeLeft = setDuration - (Date.now() - this.startTime + (this.elapsedTime || 0));
+      this.m = String(new Date(this.timeLeft).getMinutes()).padStart(2, '0');
+      this.s = String(new Date(this.timeLeft).getSeconds()).padStart(2, '0');
+      //- メーターの更新
+      this.refs.rotating_gray.style.transform = `rotate(${360 * this.timeLeft / setDuration}deg)`;
+      if (this.timeLeft / setDuration < 0.5) {
+        this.refs.right_sub.classList.remove('z3');
+        this.refs.left_gray.classList.remove('opacity-0');
+      }
+      this.update();
+      this.timeoutId = setTimeout(() => {
+        this.countDown(duration);
+      }, 10);
+    };
+
+    this.stop = () => {
+      clearTimeout(this.timeoutId);
+      this.isStarted = false;
+      if (this.elapsedTime) {
+        this.elapsedTime += Date.now() - this.startTime;
+      } else {
+        this.elapsedTime = Date.now() - this.startTime;
+      }
+    };

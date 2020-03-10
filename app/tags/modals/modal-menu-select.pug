@@ -251,5 +251,9 @@ modal-menu-select(spat-animation='bottom')
 
     this.add = (e) => {
       e.stopPropagation();
+      if (this.selectedItems.length === 0) {
+        spat.modal.alert('トレーニングを追加してください');
+        return;
+      }
       this.trigger('add', this.selectedItems);
     };
