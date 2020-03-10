@@ -1,24 +1,42 @@
 atom-timer
   //- timer部分
   div.bg-white.rounded-10.bg-white.box-shadow-inset.p20.mb20(ref='timerBlock')
-    div.s160.circle.overflow-hidden.mxa.relative.mb20(ref='timerBody')
-      div.absolute.s-full.bg-sub(ref='base_sub')
-      div.absolute.l50per.t0.h-full.w80.bg-softgray.z2.trans-origin-l(ref='rotating_gray')
-      div.absolute.l50per.t0.h-full.w80.bg-sub.z3(ref='right_sub')
-      div.absolute.r50per.t0.h-full.w80.bg-softgray.opacity-0(ref='left_gray')
-      //- 時間表示部分
-      div.absolute.s150.circle.t5.l5.bg-white.z100.f.fh
-        span.fs20 {m}:{s}
-    div.w-full.f.fc.fm
-      button.button.rounded-10.bg-primary.text-white.mr10(onclick='{startTimer}') start
-      button.button.rounded-10.bg-main.text-white.mr10(onclick='{stop}') stop
-      button.button.rounded-10.bg-sub.text-white cancel
+    div.w-full.f.flex-between.fm
+      div.s160.circle.overflow-hidden.mxa.relative(ref='timerBody')
+        div.absolute.s-full.bg-sub(ref='base_sub')
+        div.absolute.l50per.t0.h-full.w80.bg-softgray.z2.trans-origin-l(ref='rotating_gray')
+        div.absolute.l50per.t0.h-full.w80.bg-sub.z3(ref='right_sub')
+        div.absolute.r50per.t0.h-full.w80.bg-softgray.opacity-0(ref='left_gray')
+        //- 時間表示部分
+        div.absolute.s150.circle.t5.l5.bg-white.z100.f.fh
+          span.fs20(if='{set}') {m}:{s}
+          div.cursor-pointer.button.rounded-10.bg-primary.text-white(if='{!set}', onclick='{setTimer}') set
+      div.f.flex-column.fc
+        div.cursor-pointer.button.rounded-10.bg-primary.text-white(onclick='{startTimer}') start
+        div.cursor-pointer.button.rounded-10.bg-main.text-white.my10(onclick='{stop}') stop
+        div.cursor-pointer.button.rounded-10.bg-sub.text-white cancel
 
   
   script.
-    this.time = ['0', '10'];
-    this.m = this.time[0].padStart(2, '0');
-    this.s = this.time[1].padStart(2, '0');
+    this.on('mount', () => {
+      this.time = ['0', '10'];
+      this.m = this.time[0].padStart(2, '0');
+      this.s = this.time[1].padStart(2, '0');
+      this.set = false;
+    });
+
+    this.setTimer = () => {
+      cordova.plugins.DateTimePicker.show({
+        mode: 'datetime',
+        date: 'time',
+        locale: 'ja_JP',
+        minDate: new Date(),
+        success: (duration) => {
+          console.log(duration);
+          this.set = true;
+        }
+      });
+    };
 
     this.startTimer = () => {
       if (this.isStarted) return;
@@ -32,17 +50,23 @@ atom-timer
     };
 
     this.countDown = (duration) => {
-      if (this.timeLeft <= 0) {
-        this.m = '00';
-        this.s = '00';
+      if (this.timeLeft < 0) {
+        this.m = +this.time[0];
+        this.s = +this.time[1];
         this.update();
         this.isStarted = false;
+        this.timeLeft = 0;
+        this.refs.right_sub.classList.add('z3');
+        this.refs.left_gray.classList.add('opacity-0');
+        this.elapsedTime = 0;
         return;
       }
       var setDuration = (duration.m * 60 + duration.s) * 1000;
       this.timeLeft = setDuration - (Date.now() - this.startTime + (this.elapsedTime || 0));
-      this.m = String(new Date(this.timeLeft).getMinutes()).padStart(2, '0');
-      this.s = String(new Date(this.timeLeft).getSeconds()).padStart(2, '0');
+      if (setDuration - this.timeLeft > 1000) {
+        this.m = String(new Date(this.timeLeft).getMinutes()).padStart(2, '0');
+        this.s = String(new Date(this.timeLeft).getSeconds() + 1).padStart(2, '0');
+      }
       //- メーターの更新
       this.refs.rotating_gray.style.transform = `rotate(${360 * this.timeLeft / setDuration}deg)`;
       if (this.timeLeft / setDuration < 0.5) {
@@ -56,6 +80,7 @@ atom-timer
     };
 
     this.stop = () => {
+      if (!this.isStarted) return;
       clearTimeout(this.timeoutId);
       this.isStarted = false;
       if (this.elapsedTime) {
