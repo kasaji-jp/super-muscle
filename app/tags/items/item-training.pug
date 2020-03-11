@@ -23,9 +23,9 @@ item-training
             p.fs12 セット
         div.s100.f.fh
           img.object-fit-cover(src='{opts.item.image}')
-      div.w-full(ref='timer-container')
-        div(data-is='atom-timer', ref='timer')
-      button.p10.rounded-full.f.fh.w200.mxa(class='bg-{isDone ? "palegray" : "sub"} {"cursor-pointer" : !isDone}', onsubmit='{done}', type='submit')
+      div.transition.overflow-hidden.max-h0(ref='timerBox')
+        div(data-is='atom-timer')
+      button.p10.rounded-full.f.fh.w200.mxa.mt10(class='bg-{isDone ? "palegray" : "sub"} {"cursor-pointer" : !isDone}', onsubmit='{done}', type='submit')
         span.bold.fs18.text-white.font-impact done!
 
         
@@ -33,11 +33,14 @@ item-training
   script.
     this.on('mount', () => {
       this.isDone = false;
+      this.timerOpened = false;
     });
 
     this.done = (e) => {
       e.preventDefault();
       this.isDone = !this.inDone;
+      this.timerOpened = false;
+      this.refs.timerBox.style.maxHeight = 0;
       this.data = {
         weight: this.refs.weight.value,
         rep: this.refs.rep.value,
@@ -57,5 +60,12 @@ item-training
     };
 
     this.timerOpen = () => {
-      spat.modal.open('modal-timer');
+      var atomHeight = this.tags['atom-timer'].getHeight();
+      this.timerOpened = !this.timerOpened;
+      if (this.timerOpened) {
+        this.refs.timerBox.style.maxHeight = `${atomHeight}px`;
+      } else {
+        this.refs.timerBox.style.maxHeight = 0;
+      }
+      this.update();
     };
