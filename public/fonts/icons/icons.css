@@ -4,12 +4,12 @@
 
 @font-face {
   font-family: "icons";
-  src: url("./icons_dc50a850d9a47c10ecede0d02b5ab7aa.eot");
-  src: url("./icons_dc50a850d9a47c10ecede0d02b5ab7aa.eot?#iefix") format("embedded-opentype"),
-       url("./icons_dc50a850d9a47c10ecede0d02b5ab7aa.woff2") format("woff2"),
-       url("./icons_dc50a850d9a47c10ecede0d02b5ab7aa.woff") format("woff"),
-       url("./icons_dc50a850d9a47c10ecede0d02b5ab7aa.ttf") format("truetype"),
-       url("./icons_dc50a850d9a47c10ecede0d02b5ab7aa.svg#icons") format("svg");
+  src: url("./icons_c02e52fbbaf885d9155b2ef281277951.eot");
+  src: url("./icons_c02e52fbbaf885d9155b2ef281277951.eot?#iefix") format("embedded-opentype"),
+       url("./icons_c02e52fbbaf885d9155b2ef281277951.woff2") format("woff2"),
+       url("./icons_c02e52fbbaf885d9155b2ef281277951.woff") format("woff"),
+       url("./icons_c02e52fbbaf885d9155b2ef281277951.ttf") format("truetype"),
+       url("./icons_c02e52fbbaf885d9155b2ef281277951.svg#icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -17,7 +17,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "icons";
-    src: url("./icons_dc50a850d9a47c10ecede0d02b5ab7aa.svg#icons") format("svg");
+    src: url("./icons_c02e52fbbaf885d9155b2ef281277951.svg#icons") format("svg");
   }
 }
 
@@ -27,8 +27,11 @@
 .icon-arrow_left:before,
 .icon-arrow_right:before,
 .icon-bookmark:before,
+.icon-calendar:before,
 .icon-check_stroke:before,
 .icon-home:before,
+.icon-list:before,
+.icon-list2:before,
 .icon-menu:before,
 .icon-pen:before,
 .icon-search:before,
@@ -50,8 +53,11 @@
 .icon-arrow_left:before { content: "\f100"; }
 .icon-arrow_right:before { content: "\f101"; }
 .icon-bookmark:before { content: "\f102"; }
+.icon-calendar:before { content: "\f10b"; }
 .icon-check_stroke:before { content: "\f103"; }
 .icon-home:before { content: "\f104"; }
+.icon-list:before { content: "\f109"; }
+.icon-list2:before { content: "\f10a"; }
 .icon-menu:before { content: "\f105"; }
 .icon-pen:before { content: "\f107"; }
 .icon-search:before { content: "\f106"; }

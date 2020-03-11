@@ -4,8 +4,9 @@ item-training
       div.bold.fs18.flex-fixed {opts.item.label}
       div.f.fh.cursor-pointer(if='{isDone}', onclick='{edit}')
         i.icon-pen.text-sub.fs18
-      div.f.fh.cursor-pointer.px4(if='{!isDone}', onclick='{timerOpen}')
-        i.icon-timer.text-green.fs18
+      div.f.fh.flex-column.cursor-pointer.text-green.px4(if='{!isDone}', onclick='{timerOpen}')
+        i.icon-timer.fs18.mb2
+        span.fs8 {timerOpened ? 'off' : 'on'}
     form(onsubmit='{done}')
       div.f.flex-between.mb20
         div.w-full

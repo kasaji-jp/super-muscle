@@ -15,10 +15,10 @@ module-tabbar
     this.on('mount', () => {
       this.tabs = [
         { icon: 'home', link: '/' },
-        { icon: 'search', link: '/' },
-        { icon: 'add', onclick: this.openGroupModal },
+        { icon: 'list', link: '/' },
+        { icon: 'assessment', link: '/'},
+        { icon: 'group', link: '/settings' },
         { icon: 'person_outline', link: '/mypage' },
-        { icon: 'settings', link: '/settings' },
       ];
       this.update();
     });
