@@ -4,34 +4,43 @@ item-training
       div.bold.fs18.flex-fixed {opts.item.label}
       div.f.fh.cursor-pointer(if='{isDone}', onclick='{edit}')
         i.icon-pen.text-sub.fs18
+      div.f.fh.cursor-pointer.px4(if='{!isDone}', onclick='{timerOpen}')
+        i.icon-timer.text-green.fs18
     form(onsubmit='{done}')
       div.f.flex-between.mb20
         div.w-full
           div.f.fb.mb6
-            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', type='tel', value='{data.weight}', ref='weight', required)
+            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.weight}', ref='weight', required)
             div.fs32.pl40.bold.w100(if='{isDone}') {data.weight}
             p.fs12 kg
           div.f.fb.mb6
-            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', type='tel', value='{data.rep}', ref='rep', required)
+            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.rep}', ref='rep', required)
             div.fs32.pl40.bold.w100(if='{isDone}') {data.rep}
             p.fs12 回
           div.f.fb.mb6
-            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', type='tel', value='{data.set}', ref='set', required)
+            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.set}', ref='set', required)
             div.fs32.pl40.bold.w100(if='{isDone}') {data.set}
             p.fs12 セット
         div.s100.f.fh
           img.object-fit-cover(src='{opts.item.image}')
-      button.p10.rounded-full.f.fh.w200.mxa(class='bg-{isDone ? "palegray" : "sub"} {"cursor-pointer" : !isDone}', onsubmit='{done}', type='submit')
+      div.transition.overflow-hidden.max-h0(ref='timerBox')
+        div(data-is='atom-timer')
+      button.p10.rounded-full.f.fh.w200.mxa.mt10(class='bg-{isDone ? "palegray" : "sub"} {"cursor-pointer" : !isDone}', onsubmit='{done}', type='submit')
         span.bold.fs18.text-white.font-impact done!
+
+        
 
   script.
     this.on('mount', () => {
       this.isDone = false;
+      this.timerOpened = false;
     });
 
     this.done = (e) => {
       e.preventDefault();
       this.isDone = !this.inDone;
+      this.timerOpened = false;
+      this.refs.timerBox.style.maxHeight = 0;
       this.data = {
         weight: this.refs.weight.value,
         rep: this.refs.rep.value,
@@ -43,5 +52,20 @@ item-training
 
     this.edit = () => {
       this.isDone = !this.isDone;
+      this.update();
+    };
+
+    this.closeRemovable = () => {
+      this.parent.closeRemovable()
+    };
+
+    this.timerOpen = () => {
+      var atomHeight = this.tags['atom-timer'].getHeight();
+      this.timerOpened = !this.timerOpened;
+      if (this.timerOpened) {
+        this.refs.timerBox.style.maxHeight = `${atomHeight}px`;
+      } else {
+        this.refs.timerBox.style.maxHeight = 0;
+      }
       this.update();
     };

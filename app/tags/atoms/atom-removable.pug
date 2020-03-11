@@ -22,14 +22,12 @@ atom-removable
           e.preventDefault();
         }
         var distance = Math.max(-this.refs.removeButton.offsetWidth, Math.min(e.mx, 0));
-
         this.update();
         this.refs.item.style.transform = `translateX(${distance}px)`;
       });
       this.flickable.on('end', e => {
         if (Math.abs(e.mx) < Math.abs(e.my)) return;
         var rate = e.dx / 5 + e.mx / 68;
-        console.log(rate);
         if (rate < -1) {
           this.refs.item.style.transform = `translateX(${-this.refs.removeButton.offsetWidth}px)`;
         } else if (rate > 1) {
@@ -41,4 +39,8 @@ atom-removable
 
     this.remove = () => {
       this.parent.remove(this.opts.item);
+    };
+
+    this.closeRemovable = () => {
+      this.refs.item.style.transform = 'translateX(0px)';
     };
