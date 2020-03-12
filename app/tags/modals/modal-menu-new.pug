@@ -1,0 +1,31 @@
+modal-menu-new(spat-animation='bottom')
+  div.s-full.bg-maingray.f.flex-column.relative(ref='modal')
+    module-header.flex-fixed(title='メニューを追加', close='{close}')
+    div.h-full.overflow-scroll
+      div.container.px20.pt20
+        div.w-full.box-shadow.mb30.cursor-pointer(each='{content in contents}', onclick='{openModal}')
+          div.w-full.f.fh.py30
+            img.w100(src='{content.image}')
+          div.bg-white.p20
+            div.text-center.fs24.bold.mb20 {content.title}
+            div.fs16 {content.description}
+    module-tabbar
+
+  script.
+    this.contents = [
+      {
+        title: 'マイメニューを登録',
+        description: '自分だけのオリジナルメニューを作成して、友達ともシェアしよう！！',
+        image: '/static/images/sample.png',
+        type: 'menu',
+      },
+      {
+        title: 'マイトレーニングを登録',
+        description: 'オリジナルの重量、セット、回数を登録したり、自分だけのエクササイズを追加してみよう！！',
+        image: '/static/images/sample.png',
+        type: 'training',
+      },
+    ];
+
+
+
