@@ -1,26 +1,27 @@
-modal-menu-select(spat-animation='bottom')
-  div.s-full.bg-maingray.f.flex-column.relative(ref='modal')
-    module-header.flex-fixed(title='SELECT TRAINING', close='{close}')
+page-menu
+  //- 削除ボタンをやる必要あり
+  div.flex.flex-column.h-full
+    module-header(title="MY MENU", add='{true}')
     div.f.fc.w-full.py20
       div.s8.circle.mx4(each='{page, i in pages}', class='{current === i ? "bg-main" : "bg-deepgray"}')
     div.f.overflow-hidden.h-full(ref='flickTarget')
       div.w-full.flex-fixed.f.flex-column(each='{page, i in pages}')
         div.text-center.mb30
           span.text-main.border-bottom.border-main.bw4.pb4.fw6 {page.title}
-        div.h-full.overflow-scroll(if='{i === 0}')
-          div(data-is='item-workout-list', each='{item in dummies}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}')
-        div.h-full.overflow-scroll(if='{i === 1}')
-          div(data-is='item-workout-list', each='{item in mylist}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}', type='mylist')
-        div.h-full.overflow-scroll(if='{i === 2}')
-          div(data-is='item-workout-list', each='{item in dummies}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}')
-    button.absolute.z2.r0.l0.b10.mxa.button.bg-main.w200.p20.rounded-full.text-white.bold.font-impact(onclick='{add}') add
-
+        div.h-full.overflow-scroll.w-full(if='{i === 0}')
+          div(data-is='item-workout-list', each='{item in dummies}', item='{item}')
+        div.h-full.overflow-scroll.w-full(if='{i === 1}')
+          div(data-is='item-workout-list', each='{item in mylist}', item='{item}', type='mylist')
+    module-tabbar
 
   script.
+    this.current = 0;
+
+    this.selectedItems = [];
+
     this.pages = [
-      {title: '最近のトレーニング'},
-      {title: '自分のメニュー'},
-      {title: 'さがす'},
+      {title: 'マイトレーニング'},
+      {title: 'マイメニュー'},
     ];
 
     this.dummies = {
@@ -196,20 +197,13 @@ modal-menu-select(spat-animation='bottom')
       },
     };
 
-    this.on('mount', async() => {
-      if(this.opts.contents.length > 0) {
-        this.added = this.opts.contents;
-        this.update();
-      }
-      this.selectedItems = [];
-      this.current = 0;
-      var target = this.refs.flickTarget;
-      //- 暫定対応
+    this.on('mount', () => {
       setTimeout(() => {
         this.BASE_WIDTH = target.offsetWidth;
       }, 512);
+      var target = this.refs.flickTarget;
       this.flickable = window.flickable(target, {distance: 10, axis: 'x'});
-      this.flickable.on('move', (e) => {
+      this.flickable.on('move', (e)=> {
         target.scrollLeft -= e.dx;
       });
       this.flickable.on('end', (e) => {
@@ -225,35 +219,6 @@ modal-menu-select(spat-animation='bottom')
       });
     });
 
-
-    //- 選択中のアイテムを格納
-    this.toggleItems = (items, todo) => {
-      if (todo === 'add') {
-        if (items.length > 1) {
-          items.forEach(item => {
-            this.selectedItems.push(item);
-          });
-        } else {
-          this.selectedItems.push(items);
-        }
-      } else {
-        if (items.length > 1) {
-          items.forEach(item => {
-            this.selectedItems = this.selectedItems.filter(added => added.id !== item.id);
-          });
-        } else {
-          this.selectedItems = this.selectedItems.filter(added => added.id !== items.id);
-        }
-      }
-      this.selectedItems = _.uniq(this.selectedItems, (item) => item.id);
-      this.update();
-    };
-
-    this.add = (e) => {
-      e.stopPropagation();
-      if (this.selectedItems.length === 0) {
-        spat.modal.alert('トレーニングを追加してください');
-        return;
-      }
-      this.trigger('add', this.selectedItems);
-    };
+    this.on('openModal', () => {
+      spat.modal.open('modal-menu-new');
+    });
