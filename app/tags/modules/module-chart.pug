@@ -1,0 +1,22 @@
+module-chart
+  //- canvas(ref='chart')
+
+  script.
+    this.on('mount', () => {
+      if (!this.opts.item) {
+        this.mount();
+        return;
+      }
+      
+      //- console.warn(this.opts.item);
+      this.dates = this.opts.item.map(item => item.day);
+      console.log(this.dates);
+    });
+
+    //- var ctx = this.refs.chart;
+    //- var trainingChart = new Chart(ctx, {
+    //-   type: 'bar',
+    //-   data: {
+    //-     labels: this.dates,
+    //-   }
+    //- });
