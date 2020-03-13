@@ -73,6 +73,8 @@ client:
       # faker.js
       - { src: 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js' }
       - { src: 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/locales/ja/faker.ja.js' }
+      # chart.js
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'}
       # firebase
       - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-app.js' }
       - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-auth.js' }

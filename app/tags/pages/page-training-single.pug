@@ -1,33 +1,31 @@
-page-list-single
+page-training-single
   div.flex.flex-column.h-full
-    module-header(title="MY MENU", back='{true}')
-    div.px20.w-full.pt20
-      div.f.fm.flex-between.w-full.mb20
-        div.fs28.font-impact {item.label}
-        i.material-icons.fs20.text-main(onclick='{showMenu}') edit
-      div.p20.border.rounded-10.bw8.mb20
-        div.f.fb.w-full(each='{content in item.contents}', onclick='{toPageSingle}')
-          img.s80.mr10(src='{content.image}')
-          div.w-full.border-bottom.f.fb.flex-between.pb8
-            div.w-full
-              div.fs14.mb8 {content.label}
-              div.f.text-deepgray.fs8.px2(if='{content.history}')
-                p.mr6 {content.history.day}
-                p.mr6 {content.history.weight}
-                p {content.history.rep}回×{content.history.set}セット
-              p.text-deepgray.fs8.px2(if='{!content.history}') なし
-            i.material-icons.text-main.fs24(onclick='{deleteItem}') delete
-      div.fs28.font-impact.mb20 DESCRIPTIONS
-      div.p20.border.rounded-10.bw8.mb20.lh14
-        div 友達に説明してみよう。動画のリンクを貼ってみてもいいかも。
-      div.fs28.font-impact.mb20 REACTIONS
-      div.p20.border.rounded-10.bw8.mb20
-        div リアクションはまだありません
-
+    module-header(title="{item.label}", back='{true}')
+    div.px20.pt20.w-full.f.flex-column
+      img.mxa.w200.mb10(src='{item.image}')
+      div.fs12.lh14.mb20 {item.discription}
+      div.bold.fs20.mb20 LOG
+      div.border.bw6.rounded-10.p12.mb20
+        div.f.fs18.border-bottom(if='{log}', each='{log in item.logs}')
+          p.mr6 {log.day}
+          p.mr6 {log.weight}kg
+          p {log.rep}回×{log.set}セット
+        div(if='{!item.logs}') まだありません。
+      div.w-full(data-is='module-chart', item='{item.logs}')
 
   script.
-    this.dummies = {
-      arms: {
+    //- 仮の処理データ連携後実装
+    this.on('show', (e) => {
+      this.dummies.forEach(dummy => {
+        var item = dummy.contents.find(content => content.id === e.opts.id);
+        if(item) { 
+          this.item = item;
+        }
+      });
+    });
+
+    this.dummies = [
+      {
         label: '腕',
         image: '/static/images/sample.png',
         contents: [
@@ -35,12 +33,99 @@ page-list-single
             id: '0',
             label: 'コンセントレーションカール',
             image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
+            discription: 'トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。',
+            logs: [
+              {
+                day: '2020/3/4',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/5',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/6',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/7',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/8',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/9',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/10',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/11',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/12',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/13',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/14',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/15',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/16',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/17',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/3/18',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+            ],
           },
           {
             id: '1',
@@ -69,7 +154,7 @@ page-list-single
           },
         ],
       },
-      chest: {
+      {
         label: '胸筋',
         image: '/static/images/sample.png',
         contents: [
@@ -111,7 +196,7 @@ page-list-single
           },
         ],
       },
-      abdominals: {
+      {
         label: '腹筋',
         image: '/static/images/sample.png',
         contents: [
@@ -148,7 +233,7 @@ page-list-single
           },
         ],
       },
-    };
+    ];
 
     this.mylist = [
       {
@@ -207,56 +292,4 @@ page-list-single
       },
     ];
 
-    this.on('show', (e) => {
-      this.item = this.mylist.find(item => item.list_id === e.opts.id);
-      this.update();
-    });
 
-
-    this.showMenu = () => {
-      var modal = spat.modal.open('modal-actionsheet');
-      modal.on('edit', () => {
-        modal.close();
-        var modal_menu = spat.modal.open('modal-menu-select', {contents: this.item.contents});
-        modal_menu.on('add', (item) => {
-          if (item.length > 1) {
-            item.forEach(item => {
-              this.item.contents.push(item);
-            });
-          } else {
-            this.item.contents.push(item[0]);
-          }
-          spat.modal.alert('追加しました');
-          modal_menu.close();
-          this.update();
-        });
-      });
-      modal.on('delete', () => {
-        modal.close();
-        spat.modal.confirm('このメニューを削除しますか？').on('confirm', async () => {
-          //- これから実装
-          //- await app.ref.child(`/spots/${opts.item.data.spot_id}/reports/${opts.item.id}`).del();
-          spat.modal.alert('メニューを削除しました');
-          //- opts.item._del = true;
-          //- riot.update();
-        });
-      });
-    };
-
-    this.deleteItem = (e) => {
-      e.stopPropagation();
-      spat.modal.confirm('このトレーニングを削除しますか？').on('confirm', async() => {
-        this.item.contents = this.item.contents.filter(content => content.id !== e.item.content.id);
-        //- これから実装
-        //- await app.ref.child(`/spots/${opts.item.data.spot_id}/reports/${opts.item.id}`).del();
-        spat.modal.alert('トレーニングを削除しました');
-        //- opts.item._del = true;
-        //- riot.update();
-        this.update()
-      });
-    };
-
-    this.toPageSingle = () => {
-      //- これから実装
-      spat.modal.alert('これから実装します');
-    };
