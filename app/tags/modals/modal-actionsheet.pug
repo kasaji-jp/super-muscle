@@ -1,0 +1,19 @@
+modal-actionsheet(spat-animation='fade')
+  div.s-full.bg-clearblack(ref='modal')
+    div.w-full.f.fr.pt30
+      div.bg-white.rounded-10.bold
+        div.text-sub.f.fh.p20.border-bottom(onclick='{edit}')
+          span トレーニングを追加
+        div.text-danger.f.fh.p20.border-bottom(onclick='{delete}')
+          span リストを削除
+        div.f.fh.p20(onclick='{close}')
+          span 閉じる
+
+  script.
+    this.edit = () => {
+      this.trigger('edit');
+    };
+
+    this.delete = () => {
+      this.trigger('delete');
+    };
