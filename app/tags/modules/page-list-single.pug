@@ -1,30 +1,31 @@
-page-menu
-  //- 削除ボタンをやる必要あり
+page-list-single
   div.flex.flex-column.h-full
-    module-header(title="MY MENU", add='{true}')
-    div.f.fc.w-full.py20
-      div.s8.circle.mx4(each='{page, i in pages}', class='{current === i ? "bg-main" : "bg-deepgray"}')
-    div.f.overflow-hidden.h-full(ref='flickTarget')
-      div.w-full.flex-fixed.f.flex-column(each='{page, i in pages}')
-        div.text-center.mb30
-          span.text-main.border-bottom.border-main.bw4.pb4.fw6 {page.title}
-        div.h-full.overflow-scroll.w-full(if='{i === 0}')
-          div(data-is='item-workout-list', each='{item in dummies}', item='{item}')
-        div.h-full.overflow-scroll.w-full(if='{i === 1}')
-          div(data-is='item-workout-list', each='{item in mylist}', item='{item}', type='mylist')
-    module-tabbar
+    module-header(title="MY MENU", back='{true}')
+    div.px20.w-full.pt20
+      div.f.fm.flex-between.w-full.mb20
+        div.fs28.font-impact {item.label}
+        i.material-icons.fs20.text-main(onclick='{showMenu}') edit
+      div.p20.border.rounded-10.bw8.mb20
+        div.f.fb.w-full(each='{content in item.contents}', onclick='{toPageSingle}')
+          img.s80.mr10(src='{content.image}')
+          div.w-full.border-bottom.f.fb.flex-between.pb8
+            div.w-full
+              div.fs14.mb8 {content.label}
+              div.f.text-deepgray.fs8.px2(if='{content.history}')
+                p.mr6 {content.history.day}
+                p.mr6 {content.history.weight}
+                p {content.history.rep}回×{content.history.set}セット
+              p.text-deepgray.fs8.px2(if='{!content.history}') なし
+            i.material-icons.text-main.fs24(onclick='{deleteItem}') delete
+      div.fs28.font-impact.mb20 DESCRIPTIONS
+      div.p20.border.rounded-10.bw8.mb20.lh14
+        div 友達に説明してみよう。動画のリンクを貼ってみてもいいかも。
+      div.fs28.font-impact.mb20 REACTIONS
+      div.p20.border.rounded-10.bw8.mb20
+        div リアクションはまだありません
+
 
   script.
-    this.current = 0;
-
-    this.selectedItems = [];
-
-    //- modal-menu-selectにも同様のobjが
-    this.pages = [
-      {title: 'マイトレーニング'},
-      {title: 'マイメニュー'},
-    ];
-
     this.dummies = {
       arms: {
         label: '腕',
@@ -149,8 +150,8 @@ page-menu
       },
     };
 
-    this.mylist = {
-      big3: {
+    this.mylist = [
+      {
         label: 'ビッグ3',
         list_id: '0',
         contents: [
@@ -177,7 +178,7 @@ page-menu
           },
         ],
       },
-      mychestlist: {
+      {
         label: 'my胸筋セット',
         list_id: '1',
         contents: [
@@ -185,6 +186,12 @@ page-menu
             id: '6',
             label: 'ベンチプレス',
             image: '/static/images/sample.png',
+            history: {
+              day: '2020/3/4',
+              weight: '35kg',
+              rep: '10',
+              set: '4',
+            },
           },
           {
             id: '10',
@@ -198,30 +205,58 @@ page-menu
           },
         ],
       },
+    ];
+
+    this.on('show', (e) => {
+      this.item = this.mylist.find(item => item.list_id === e.opts.id);
+      this.update();
+    });
+
+
+    this.showMenu = () => {
+      var modal = spat.modal.open('modal-actionsheet');
+      modal.on('edit', () => {
+        modal.close();
+        var modal_menu = spat.modal.open('modal-menu-select', {contents: this.item.contents});
+        modal_menu.on('add', (item) => {
+          if (item.length > 1) {
+            item.forEach(item => {
+              this.item.contents.push(item);
+            });
+          } else {
+            this.item.contents.push(item[0]);
+          }
+          spat.modal.alert('追加しました');
+          modal_menu.close();
+          this.update();
+        });
+      });
+      modal.on('delete', () => {
+        modal.close();
+        spat.modal.confirm('このメニューを削除しますか？').on('confirm', async () => {
+          //- これから実装
+          //- await app.ref.child(`/spots/${opts.item.data.spot_id}/reports/${opts.item.id}`).del();
+          spat.modal.alert('メニューを削除しました');
+          //- opts.item._del = true;
+          //- riot.update();
+        });
+      });
     };
 
-    this.on('mount', () => {
-      setTimeout(() => {
-        this.BASE_WIDTH = target.offsetWidth;
-      }, 512);
-      var target = this.refs.flickTarget;
-      this.flickable = window.flickable(target, {distance: 10, axis: 'x'});
-      this.flickable.on('move', (e)=> {
-        target.scrollLeft -= e.dx;
+    this.deleteItem = (e) => {
+      e.stopPropagation();
+      spat.modal.confirm('このトレーニングを削除しますか？').on('confirm', async() => {
+        this.item.contents = this.item.contents.filter(content => content.id !== e.item.content.id);
+        //- これから実装
+        //- await app.ref.child(`/spots/${opts.item.data.spot_id}/reports/${opts.item.id}`).del();
+        spat.modal.alert('トレーニングを削除しました');
+        //- opts.item._del = true;
+        //- riot.update();
+        this.update()
       });
-      this.flickable.on('end', (e) => {
-        var rate = e.dx / 5 + e.mx / (this.BASE_WIDTH * 0.5);
-        if (rate >= 1 && this.current >= 1 ) {
-          this.current--;
-        } 
-        else if (rate <= -1 && this.current <= this.pages.length - 2)  {
-          this.current++;
-        }
-        this.update();
-        $(target).stop().animate({scrollLeft : this.BASE_WIDTH * this.current}, 256);
-      });
-    });
+    };
 
-    this.on('openModal', () => {
-      spat.modal.open('modal-menu-new');
-    });
+    this.toPageSingle = () => {
+      //- これから実装
+      spat.modal.alert('これから実装します');
+    };

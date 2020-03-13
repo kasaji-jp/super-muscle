@@ -3,6 +3,9 @@
 ;(function(exports) {
 
   exports.map = {
+    '/list/:id': {
+      tag: 'page-list-single',
+    },
     '/groups/:id': {
       tag: 'page-groups-single',
     },

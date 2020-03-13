@@ -150,6 +150,7 @@ modal-menu-select(spat-animation='bottom')
     this.mylist = {
       big3: {
         label: 'ビッグ3',
+        list_id: '0',
         contents: [
           {
             id: '6',
@@ -176,6 +177,7 @@ modal-menu-select(spat-animation='bottom')
       },
       mychestlist: {
         label: 'my胸筋セット',
+        list_id: '1',
         contents: [
           {
             id: '6',
@@ -197,7 +199,8 @@ modal-menu-select(spat-animation='bottom')
     };
 
     this.on('mount', async() => {
-      if(this.opts.contents.length > 0) {
+      console.log(this.opts.contents);
+      if(this.opts.contents && this.opts.contents.length > 0) {
         this.added = this.opts.contents;
         this.update();
       }
