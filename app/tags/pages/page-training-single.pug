@@ -9,31 +9,34 @@ page-training-single
       form.w-full.f.fh(onsubmit='{setType}')
         div.f.fb.py20.fs16
           p.mr4.fs12 期間:
-          select.outline-none.px10.py4.bg-softgray.rounded-4.mr14(ref='type', onchange='{selectType}')
+          select.outline-none.px6.py4.bg-softgray.rounded-4.text-center.mr14(ref='type', onchange='{selectType}')
             option(each='{type, i in types}', selected='{i === 0}', value='{type.id}') {type.label}
           div.f.fb(class='{opacity-30 : !(refs.type.value === "month")}')
             p.mr4.fs12 対象:
-            select.outline-none.px10.py4.bg-softgray.rounded-4(ref='targetYear', onchange='{selectYear}')
+            select.outline-none.px6.py4.bg-softgray.rounded-4.text-center(ref='targetYear', onchange='{selectYear}')
               option(value='normal', hidden, selected) ----
-              option(each='{year, i in availableYear}', value='{year}') {year}
+              option(each='{year, i in availableYear}', value='{year}', selected='{selectedYear === year}') {year}
             p.mr4.fs12 年
-            select.outline-none.px10.py4.bg-softgray.rounded-4(ref='targetMonth')
+            select.outline-none.px6.py4.bg-softgray.rounded-4.text-center(ref='targetMonth', onchange='{selectMonth}')
               option(value='normal', hidden, selected) --
-              option(each='{month, i in availableMonth}', value='{month}') {month}
+              option(each='{month, i in availableMonth}', value='{month}', selected='{selectedMonth === month}') {month}
             p.mr14.fs12 月
         button.button.primary(type='submit') 表示
       div.border.bw6.rounded-10.p12.mb20.h200.overflow-y-scroll
         div.f.fs18.border-bottom(if='{log}', each='{log in logsToShow}')
-          p.mr6 {log.day}
+          //- 年間表示の時だけ切替
+          p(class='{log.type ? "mr18" : "mr6"}') {log.day}
           p.mr6 {"avg." : log.type}{log.weight}kg
           p(if='{!log.type}') {log.rep}回×{log.set}セット
-        div(if='{!item.logs}') まだありません。
+        div.s-full.f.fh(if='{!item.logs}')
+          span まだありません。
 
   script.
+    //- shrinkview実装
     this.types = [
       {label: '1週間', id: 'week'},
       {label: '月間', id: 'month'},
-      {label: '年間', id: 'year'},
+      {label: '直近1年', id: 'year'},
     ];
 
     //- 仮の処理データ連携後実装
@@ -44,9 +47,21 @@ page-training-single
           this.item = item;
         }
       });
-      //- 仮の処理momentobjに変換
-      this.dates = this.item.logs.map(item => moment(`${item.day}`));
-      this.logsToShow = this.getLogs(this.refs.type.value);
+      if (this.item.logs) {
+        //- 仮の処理momentobjに変換
+        this.dates = this.item.logs.map(item => moment(`${item.day}`));
+        this.logsToShow = this.getLogs(this.refs.type.value);
+        //- 直近1週間のログがなければ直近のログがある月間を表示
+        if (!this.logsToShow.length) {
+          this.refs.type.value = 'month';
+          this.logsToShow = this.getLogs(this.refs.type.value);
+          this.selectType();
+          this.selectedYear = this.availableYear[this.availableYear.length - 1];
+          this.selectYear();
+          this.selectedMonth = this.availableMonth[this.availableMonth.length - 1];
+          this.logsToShow = this.getLogs(this.refs.type.value);
+        }
+      }
     });
 
     this.dummies = [
@@ -60,6 +75,24 @@ page-training-single
             image: '/static/images/sample.png',
             discription: 'トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。',
             logs: [
+              {
+                day: '2018/1/4',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2019/4/4',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2019/12/4',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
               {
                 day: '2020/1/4',
                 weight: '35',
@@ -330,6 +363,14 @@ page-training-single
             id: '1',
             label: 'インクラインカール',
             image: '/static/images/sample.png',
+            logs: [
+              {
+                day: '2020/2/12',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+            ],
           },
           {
             id: '2',
@@ -507,11 +548,19 @@ page-training-single
     };
 
     this.selectYear = () => {
-      this.availableMonth = this.getAvailableMonth(this.refs.targetYear.value);
+      if (this.refs.targetYear.value !== 'normal') {
+        this.selectedYear = +this.refs.targetYear.value;
+      }
+      this.availableMonth = this.getAvailableMonth(this.selectedYear);
     };
 
+    this.selectMonth = () => {
+      this.selectedMonth = +this.refs.targetMonth.value;
+    };
+
+    //- 対象年のログが残ってる月を返す関数
     this.getAvailableMonth = (year) => {
-      var months = this.dates.filter(date => date.get('year').toString() === year).map(date => date.get('month'));
+      var months = this.dates.filter(date => date.get('year') === year).map(date => date.get('month'));
       months = _.uniq(months, (month) => month).map(month => +month + 1);
       return months;
     };
@@ -519,11 +568,23 @@ page-training-single
     this.getLogs = (type) => {
       var logs = [];
       if (type === 'year') {
-        var logsTemp = this.item.logs.filter(log => moment(`${log.day}`).get('year') === moment().get('year'));
-        var months = this.getAvailableMonth(moment().get('year').toString());
+        var timings = [];
+        var logsTemp = this.item.logs.filter(log => moment().diff(moment(`${log.day}`), 'year') < 1);
+        var thisYear = moment().get('year');
+        //- 今年、去年と年が一致するobjを返す
+        [thisYear - 1, thisYear].forEach(year => {
+          var months = this.getAvailableMonth(year);
+          months.forEach(month => {
+            timings.push({
+              year: year,
+              month: month,
+            });
+          });
+        });
+        
         //- 対象月毎に平均重量、平均rep数を算出
-        months.forEach(month => {
-          var logsSingleMonth =  logsTemp.filter(log => moment(`${log.day}`).get('month') === +month - 1);
+        timings.forEach(timing => {
+          var logsSingleMonth =  logsTemp.filter(log => moment(`${log.day}`).get('month') === +timing.month - 1);
           var totalWeight = 0;
           var totalReps = 0;
           logsSingleMonth.forEach(log => {
@@ -533,7 +594,7 @@ page-training-single
           var aveWeight = Math.round(totalWeight / logsSingleMonth.length);
           var aveReps = Math.round(totalReps / logsSingleMonth.length);
           logs.push({
-            day: `${moment().get('year')}/${month}`,
+            day: `${timing.year}/${timing.month}`,
             weight: aveWeight,
             rep: aveReps,
             type: 'year',
@@ -546,8 +607,8 @@ page-training-single
         }
         else if (type === 'month') {
           logs = this.item.logs
-            .filter(log => moment(`${log.day}`).get('year') === +this.refs.targetYear.value)
-            .filter(log => moment(`${log.day}`).get('month') === +this.refs.targetMonth.value - 1);
+            .filter(log => moment(`${log.day}`).get('year') === this.selectedYear)
+            .filter(log => moment(`${log.day}`).get('month') === this.selectedMonth - 1);
         }
       }
       return logs;
