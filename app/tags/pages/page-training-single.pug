@@ -1,19 +1,41 @@
 page-training-single
-  div.flex.flex-column.h-full
+  div.f.flex-column
     module-header(title="{item.label}", back='{true}')
-    div.px20.pt20.w-full.f.flex-column
+    div.px20.pt20.s-full.f.flex-column
       img.mxa.w200.mb10(src='{item.image}')
       div.fs12.lh14.mb20 {item.discription}
-      div.bold.fs20.mb20 LOG
-      div.border.bw6.rounded-10.p12.mb20
-        div.f.fs18.border-bottom(if='{log}', each='{log in item.logs}')
+      div.bold.fs20 LOG
+      div.mxn20(data-is='module-chart', item='{logsToShow}', show='{item.logs}')
+      form.w-full.f.fh(onsubmit='{setType}')
+        div.f.fb.py20.fs16
+          p.mr4.fs12 期間:
+          select.outline-none.px10.py4.bg-softgray.rounded-4.mr14(ref='type', onchange='{selectType}')
+            option(each='{type, i in types}', selected='{i === 0}', value='{type.id}') {type.label}
+          div.f.fb(class='{opacity-30 : !(refs.type.value === "month")}')
+            p.mr4.fs12 対象:
+            select.outline-none.px10.py4.bg-softgray.rounded-4(ref='targetYear', onchange='{selectYear}')
+              option(value='normal', hidden, selected) ----
+              option(each='{year, i in availableYear}', value='{year}') {year}
+            p.mr4.fs12 年
+            select.outline-none.px10.py4.bg-softgray.rounded-4(ref='targetMonth')
+              option(value='normal', hidden, selected) --
+              option(each='{month, i in availableMonth}', value='{month}') {month}
+            p.mr14.fs12 月
+        button.button.primary(type='submit') 表示
+      div.border.bw6.rounded-10.p12.mb20.h200.overflow-y-scroll
+        div.f.fs18.border-bottom(if='{log}', each='{log in logsToShow}')
           p.mr6 {log.day}
-          p.mr6 {log.weight}kg
-          p {log.rep}回×{log.set}セット
+          p.mr6 {"avg." : log.type}{log.weight}kg
+          p(if='{!log.type}') {log.rep}回×{log.set}セット
         div(if='{!item.logs}') まだありません。
-      div.w-full(data-is='module-chart', item='{item.logs}')
 
   script.
+    this.types = [
+      {label: '1週間', id: 'week'},
+      {label: '月間', id: 'month'},
+      {label: '年間', id: 'year'},
+    ];
+
     //- 仮の処理データ連携後実装
     this.on('show', (e) => {
       this.dummies.forEach(dummy => {
@@ -22,6 +44,9 @@ page-training-single
           this.item = item;
         }
       });
+      //- 仮の処理momentobjに変換
+      this.dates = this.item.logs.map(item => moment(`${item.day}`));
+      this.logsToShow = this.getLogs(this.refs.type.value);
     });
 
     this.dummies = [
@@ -36,7 +61,181 @@ page-training-single
             discription: 'トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。',
             logs: [
               {
-                day: '2020/3/4',
+                day: '2020/1/4',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/5',
+                weight: '40',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/6',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/7',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/8',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/9',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/10',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/11',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/12',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/13',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/14',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/15',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/16',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/17',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/1/18',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/4',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/5',
+                weight: '40',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/6',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/7',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/8',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/9',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/10',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/11',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/12',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/13',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/14',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/15',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/16',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/17',
+                weight: '35',
+                rep: '10',
+                set: '4',
+              },
+              {
+                day: '2020/2/18',
                 weight: '35',
                 rep: '10',
                 set: '4',
@@ -49,7 +248,7 @@ page-training-single
               },
               {
                 day: '2020/3/6',
-                weight: '35',
+                weight: '80',
                 rep: '10',
                 set: '4',
               },
@@ -109,7 +308,7 @@ page-training-single
               },
               {
                 day: '2020/3/16',
-                weight: '35',
+                weight: '40',
                 rep: '10',
                 set: '4',
               },
@@ -163,7 +362,7 @@ page-training-single
             label: 'ベンチプレス',
             image: '/static/images/sample.png',
             history: {
-              day: '2020/3/4',
+              day: '2020/2020/3/4',
               weight: '35kg',
               rep: '10',
               set: '4',
@@ -205,7 +404,7 @@ page-training-single
             label: 'ウェイテッドクランチ',
             image: '/static/images/sample.png',
             history: {
-              day: '2020/3/4',
+              day: '2020/2020/3/4',
               weight: '35kg',
               rep: '10',
               set: '4',
@@ -272,7 +471,7 @@ page-training-single
             label: 'ベンチプレス',
             image: '/static/images/sample.png',
             history: {
-              day: '2020/3/4',
+              day: '2020/2020/3/4',
               weight: '35kg',
               rep: '10',
               set: '4',
@@ -292,4 +491,76 @@ page-training-single
       },
     ];
 
+    this.selectType = () => {
+      if (this.refs.type.value === 'month') {
+        this.refs.targetYear.disabled = false;
+        this.refs.targetMonth.disabled = false;
+        //- selectboxに選択可能な値をセット
+        this.availableYear = this.dates.map(date => date.get('year'));
+        this.availableYear = _.uniq(this.availableYear, (year) => year);
+      } else {
+        this.refs.targetYear.disabled = true;
+        this.refs.targetMonth.disabled = true;
+        this.refs.targetYear.value = 'normal';
+        this.refs.targetMonth.value = 'normal';
+      }
+    };
+
+    this.selectYear = () => {
+      this.availableMonth = this.getAvailableMonth(this.refs.targetYear.value);
+    };
+
+    this.getAvailableMonth = (year) => {
+      var months = this.dates.filter(date => date.get('year').toString() === year).map(date => date.get('month'));
+      months = _.uniq(months, (month) => month).map(month => +month + 1);
+      return months;
+    };
+
+    this.getLogs = (type) => {
+      var logs = [];
+      if (type === 'year') {
+        var logsTemp = this.item.logs.filter(log => moment(`${log.day}`).get('year') === moment().get('year'));
+        var months = this.getAvailableMonth(moment().get('year').toString());
+        //- 対象月毎に平均重量、平均rep数を算出
+        months.forEach(month => {
+          var logsSingleMonth =  logsTemp.filter(log => moment(`${log.day}`).get('month') === +month - 1);
+          var totalWeight = 0;
+          var totalReps = 0;
+          logsSingleMonth.forEach(log => {
+            totalWeight += +log.weight;
+            totalReps += +log.rep;
+          });
+          var aveWeight = Math.round(totalWeight / logsSingleMonth.length);
+          var aveReps = Math.round(totalReps / logsSingleMonth.length);
+          logs.push({
+            day: `${moment().get('year')}/${month}`,
+            weight: aveWeight,
+            rep: aveReps,
+            type: 'year',
+          });
+        });
+      }
+      else {
+        if (type === 'week') {
+          logs = this.item.logs.filter(log => moment().diff(moment(`${log.day}`), 'days') < 7);
+        }
+        else if (type === 'month') {
+          logs = this.item.logs
+            .filter(log => moment(`${log.day}`).get('year') === +this.refs.targetYear.value)
+            .filter(log => moment(`${log.day}`).get('month') === +this.refs.targetMonth.value - 1);
+        }
+      }
+      return logs;
+    };
+
+    this.setType = (e) => {
+      e.preventDefault();
+      //- 月間を選択 && 対象年月選択未済でアラート
+      if (this.refs.type.value === 'month' && (!this.availableYear || !this.availableMonth)) {
+        spat.modal.alert('対象年月を入力してください');
+        return;
+      }
+      this.logsToShow =  this.getLogs(this.refs.type.value);
+      this.tags['module-chart'].mount();
+    };
 

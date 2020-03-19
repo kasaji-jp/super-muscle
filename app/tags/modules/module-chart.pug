@@ -1,5 +1,6 @@
 module-chart
-  canvas(ref='chart')
+  div.h250.relative.f.fh
+    canvas.s-full(ref='chart')
 
   script.
     this.on('mount', () => {
@@ -7,15 +8,49 @@ module-chart
         this.mount();
         return;
       }
-      //- console.warn(this.opts.item);
-      this.dates = this.opts.item.map(item => item.day);
-      console.log(this.dates);
-    });
+      
+      this.weight = this.opts.item.map(item => item.weight);
+      this.dateLabel = this.opts.item.map(item => {
+        return item.type ? item.day : moment(item.day).format('MM/DD');
+      });
+      var min = Math.floor(Math.min.apply(null, this.weight) / 10) * 10 - 10;
+      //- rmの計算方法：（最大重量）＝（使用重量）×｛1＋（reps÷40）｝
+      this.rms = this.opts.item.map(item => {
+        return Math.round(item.weight * (1 + (item.rep / 40)))
+      });
+      var max = Math.floor(Math.max.apply(null, this.rms) / 10) * 10 + 10;
+      max = max - min > 40 ? max : min + 40;
 
-    var ctx = this.refs.chart;
-    var trainingChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: this.dates,
-      }
+      var ctx = this.refs.chart;
+      var trainingChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: this.dateLabel,
+          datasets: [
+            {
+              label: '重量',
+              data: this.weight,
+              borderColor: '#FFAB0B',
+              backgroundColor: 'transparent',
+            },
+            {
+              label: 'RM',
+              data: this.rms,
+              borderColor: '#EF5052',
+              backgroundColor: 'transparent',
+            },
+          ]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                suggestedMax: max,
+                suggestedMin: min,
+                stepSize: 10,
+              }
+            }]
+          }
+        }
+      });
     });
