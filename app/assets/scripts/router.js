@@ -6,6 +6,9 @@
     '/list/:id': {
       tag: 'page-list-single',
     },
+    '/training/:id': {
+      tag: 'page-training-single',
+    },
     '/groups/:id': {
       tag: 'page-groups-single',
     },

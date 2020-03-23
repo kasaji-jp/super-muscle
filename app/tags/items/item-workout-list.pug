@@ -124,8 +124,8 @@ item-workout-list
       this.parent.toggleItems(e.item.content, (e.item.content.selected ? 'add' : 'reduce'));
     };
 
-    this.movePage = () => {
-      app.routeful.go('/');
+    this.movePage = (e) => {
+      app.routeful.go(`/training/${e.item.content.id}`);
     };
 
     this.edit = (e) => {
