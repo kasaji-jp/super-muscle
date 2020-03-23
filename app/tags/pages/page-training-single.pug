@@ -30,17 +30,26 @@ page-training-single
           p(if='{!log.type}') {log.rep}回×{log.set}セット
         div.s-full.f.fh(if='{!item.logs}')
           span まだありません。
+      input.input.w-full
 
   script.
-    //- shrinkview実装
     this.types = [
       {label: '1週間', id: 'week'},
       {label: '月間', id: 'month'},
       {label: '直近1年', id: 'year'},
     ];
 
+    this.on('mount', () => {
+      app.utils.keyboardShrink(true);
+    });
+
+    this.on('hide', () => {
+      app.utils.keyboardShrink(false);
+    });
+
     //- 仮の処理データ連携後実装
     this.on('show', (e) => {
+      this.selectType();
       this.dummies.forEach(dummy => {
         var item = dummy.contents.find(content => content.id === e.opts.id);
         if(item) { 

@@ -62,6 +62,12 @@
         'https://firebasestorage.googleapis.com/v0/b/chat-rabee-jp.appspot.com/o/dummies%2Friver%2Fmatthew-feeney-75IV0_EFh0c-unsplash.jpg?alt=media&token=43c95cd3-8490-43dc-8cdb-a2297a911704',
       ];
     },
+    
+    keyboardShrink: (isShrink) => {
+      if (window.cordova && Keyboard) {
+        Keyboard.shrinkView(isShrink);
+      }
+    }
   };
 
 })();
