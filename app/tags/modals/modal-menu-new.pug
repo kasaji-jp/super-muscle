@@ -3,7 +3,7 @@ modal-menu-new(spat-animation='bottom')
     module-header.flex-fixed(title='メニューを追加', close='{close}')
     div.h-full.overflow-scroll
       div.container.px20.pt20
-        div.w-full.box-shadow.mb30.cursor-pointer(each='{content in contents}', onclick='{openModal}')
+        div.w-full.box-shadow.mb30.cursor-pointer(each='{content in contents}', onclick='{openAddModal}')
           div.w-full.f.fh.py30
             img.w100(src='{content.image}')
           div.bg-white.p20
@@ -17,7 +17,7 @@ modal-menu-new(spat-animation='bottom')
         title: 'マイメニューを登録',
         description: '自分だけのオリジナルメニューを作成して、友達ともシェアしよう！！',
         image: '/static/images/sample.png',
-        type: 'menu',
+        type: 'list',
       },
       {
         title: 'マイトレーニングを登録',
@@ -26,6 +26,10 @@ modal-menu-new(spat-animation='bottom')
         type: 'training',
       },
     ];
+
+    this.openAddModal = (e) => {
+      this.trigger('openAddModal', (e.item.content.type));
+    };
 
 
 

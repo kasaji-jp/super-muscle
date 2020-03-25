@@ -223,5 +223,31 @@ page-menu
     });
 
     this.on('openModal', () => {
-      spat.modal.open('modal-menu-new');
+      var modal = spat.modal.open('modal-menu-new');
+      modal.on('openAddModal', (type) => {
+        modal.close();
+        this.openAddModal(type);
+      });
     });
+
+    this.openAddModal = (type) => {
+      if (type === 'list') {
+        var modal = spat.modal.open('modal-newlist');
+        modal.on('goEdit', () => {
+          modal.close();
+          this.goEdit();
+        });
+      } else {
+        //- この後実装
+      }
+    };
+
+    this.goEdit = () => {
+      var modal = spat.modal.open('modal-menu-select');
+      modal.on('add', (item) => {
+        console.warn(item);
+        modal.close();
+        //- postの処理データベース連携後実装
+        //- app.routeful.go();
+      });
+    };
