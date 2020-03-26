@@ -231,15 +231,11 @@ page-menu
     });
 
     this.openAddModal = (type) => {
-      if (type === 'list') {
-        var modal = spat.modal.open('modal-newlist');
-        modal.on('goEdit', () => {
-          modal.close();
-          this.goEdit();
-        });
-      } else {
-        //- この後実装
-      }
+      var modal = spat.modal.open('modal-new-edit', {type: type});
+      modal.on('goEdit', () => {
+        modal.close();
+        this.goEdit();
+      });
     };
 
     this.goEdit = () => {
