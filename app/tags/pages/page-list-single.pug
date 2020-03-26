@@ -256,7 +256,6 @@ page-list-single
       });
     };
 
-    this.toPageSingle = () => {
-      //- これから実装
-      spat.modal.alert('これから実装します');
+    this.toPageSingle = (e) => {
+      app.routeful.go(`/training/${e.item.content.id}`);
     };
