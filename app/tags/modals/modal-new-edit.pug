@@ -1,0 +1,43 @@
+modal-new-edit(spat-animation='bottom')
+  div.s-full.bg-maingray.f.flex-column(ref='modal')
+    div.w-full(data-is='module-header', title='リスト編集', close='{close}')
+    div.s-full.px30.py30.overflow-y-scroll
+      div.fs28.bold.mb20 TITLE:
+      input.input.w-full.mb40.bg-white(ref='title', placeholder='イカしたタイトルをつけよう')
+      div.w-full(if='{opts.type === "training"}')
+        div.fs28.bold.mb20 BODY PARTS:
+        select.w-full.bg-softgray.py10.px20.fs16.rounded-4.mb40(ref='parts')
+          option(value='normal', hidden, selected) 部位を選択してください
+          option(each='{part in dummies}') {part}
+        div.mb20.fs28.bold THUMBNAILS
+        input.mb40(type='file', accept='image/*')
+      div.fs28.bold.mb20 DESCRIPTION:
+      textarea.input.w-full.mb40.bg-white.h200(ref='description', placeholder='友達も思わずマネしたくなる様な説明を書いてみよう')
+      div.w-full.py10(onclick='{opts.type === "list" ? edit : add}')
+        div.mxa.w200.f.fh.bg-sub.rounded-full.cursor-pointer
+          span.text-white.bold.py20 トレーニングを{opts.type === "list" ? '選ぶ' : '追加'}
+
+  script.
+    this.dummies = [
+      '腕',
+      '肩',
+      '腹筋',
+      '脚',
+    ];
+
+    this.edit = () => {
+      if (this.refs.title.value === '') {
+        spat.modal.alert('タイトルを入力してください')
+        return;
+      }
+      this.trigger('goEdit');
+    };
+
+    this.add = () => {
+      if (this.refs.title.value === '' || this.refs.parts.value === 'normal') {
+        spat.modal.alert('タイトル、部位は入力必須です');
+        return;
+      }
+      console.warn('add');
+      //- todo- データベース連携後ここ実装 
+    };
