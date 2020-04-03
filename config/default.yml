@@ -76,11 +76,13 @@ client:
       # chart.js
       - { src: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'}
       # firebase
-      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-app.js' }
-      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-auth.js' }
-      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js' }
-      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-firestore.js' }
-      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-storage.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/7.13.2/firebase-app.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/7.6.0/firebase-auth.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/7.6.0/firebase-database.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/7.6.0/firebase-firestore.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/7.6.0/firebase-storage.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/7.6.0/firebase-messaging.js' }
+      # - { src: 'https://www.gstatic.com/firebasejs/7.13.2/firebase-analytics.js' }
       # polyfill
       - { src: https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver }
       # hammer
@@ -108,12 +110,14 @@ client:
     tokenKey: Authorization
     debug: true
   firebase:
-    apiKey: "AIzaSyCiJjzLD4C5ueJ2wP3UVmdTa7BfiqnWu5Q"
-    authDomain: "chat-rabee-jp.firebaseapp.com"
-    databaseURL: "https://chat-rabee-jp.firebaseio.com"
-    projectId: "chat-rabee-jp"
-    storageBucket: "chat-rabee-jp.appspot.com"
-    messagingSenderId: "50741122756"
+    apiKey: "AIzaSyDTSInnOqn1dEUb8P7BrdZLqeToOflngRo"
+    authDomain: "super-muscle-2edec.firebaseapp.com"
+    databaseURL: "https://super-muscle-2edec.firebaseio.com"
+    projectId: "super-muscle-2edec"
+    storageBucket: "super-muscle-2edec.appspot.com"
+    messagingSenderId: "938303804274"
+    appId: "1:938303804274:web:e5d4978540a27591b203eb"
+    measurementId: "G-Q8NNESD9VC"
   app:
     ios:
       version: '2.0.0'
