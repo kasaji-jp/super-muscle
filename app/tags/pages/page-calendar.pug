@@ -1,0 +1,594 @@
+page-calendar 
+  div.flex.flex-column.h-full
+    module-header(title="LOGS")
+    //- calendar
+    div.s-full
+      div.w-full.f.fm.flex-between.px20.py10
+        div.button(onclick='{prev}') prev
+        div.fs20.bold {getTargetYear()}年 {getTargetMonth()}月
+        div.button(onclick='{next}') next
+      div.w-full
+        div.row.pb8
+          div.col-day.bold.fs14.text-center(each='{index in _.range(7)}') {getDay(index)}
+        div.row.w-full.border-bottom(each='{row, i in rows}', class='{"border-top" : i === 0}', if='{i !== 5 || showSixth}')
+          div.col-day.text-center.h50.border-right(each='{day in row}', class='{returnClass(day)} {day.isSelected ? "bw3 border border-sub" : "p3"}', onclick='{showLogs}') 
+            span {day.date}
+            div.s-full.f.fh(if='{day.logs}')
+              i.icon-check_stroke.text-main.fs18
+
+    div.pt10.px20.s-full.overflow-scroll
+      div.fs16.bold {logsToShow.day}
+      div.w-full.pt4.py10.f.flex-between.border-bottom(each='{log in logsToShow.logs}', if='{logsToShow.logs}')
+        div.w-full.f
+          //- 本番ではtrainingidで画像を引っ張ってくる
+          img.s40.mr10(src='/static/images/sample.png')
+          div.w-full
+            div.bold.fs16.mb4 {log.training}
+            div.fs14 {log.weight}kg × {log.rep}回 × {log.set}セット
+        div.f.fh.cursor-pointer(onclick='{openModal}')
+          i.icon-pen.text-sub.fs18
+
+      div.s-full.f.fh.py30(if='{!logsToShow.logs}')
+        span 記録はまだありません。
+
+      div.w-full.py10
+        div.mxa.w200.f.fh.bg-sub.rounded-full(onclick='{addTraining}')
+          span.text-white.bold.py20 追加する
+
+    module-tabbar
+
+  style(type='less').
+    :scope {
+      .col-day {
+        width: 14.285714286%;
+      }
+    }
+
+  script.
+    this.logs = [
+      {
+        day: '2018/1/4',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2019/4/4',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2019/12/4',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/4',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/5',
+        weight: '40',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/6',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/7',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/8',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/9',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/10',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/11',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/12',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/13',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/14',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/15',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/16',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/17',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/1/18',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/4',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/5',
+        weight: '40',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/6',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/7',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/8',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/9',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/10',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/11',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/12',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/13',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/14',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/15',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/16',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/17',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/2/18',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/5',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/6',
+        weight: '80',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/7',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/8',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/9',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/10',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/11',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/12',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/13',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/14',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/15',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/16',
+        weight: '40',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/17',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/18',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/24',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/25',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/26',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/26',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'スクワット',
+      },
+      {
+        day: '2020/3/27',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/27',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'ベンチプレス',
+      },
+      {
+        day: '2020/3/27',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'デッドリフト',
+      },
+      {
+        day: '2020/3/29',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/30',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+      {
+        day: '2020/3/31',
+        weight: '35',
+        rep: '10',
+        set: '4',
+        training: 'コンセントレーションカール',
+      },
+    ];
+
+    this.on('mount', () => {
+      //- todo- 戻って登録もできる,ログあるところ表示
+      this.target = new Date();
+      this.setUp();
+      this.rows.forEach(row => {
+        row.forEach
+      });
+      this.update();
+    });
+
+    this.setUp = () => {
+      this.createRows();
+      this.setDateInfo();
+      this.setLog();
+    };
+
+    this.createRows = () => {
+      //- 日付の配列を生成
+      this.rows = [];
+      _.range(6).forEach(index => {
+        var row = [];
+        _.range(7).forEach(day => {
+          row.push({day: day, isSelected: false});
+        });
+        this.rows.push(row);
+      });
+    };
+
+    this.setDateInfo = () => {
+      var date = new Date(this.target.getTime());
+      date.setDate(1);
+      //- 1日の曜日
+      var firstDay = date.getDay();
+      this.rows.forEach( (days, i) => {
+        days.forEach(day => {
+          var dateTemp = i * 7 + day.day - firstDay + 1;
+          date.setDate(dateTemp);
+          day.date = date.getDate();
+          day.month = date.getMonth() + 1;
+          //- 表示中年月の1日にsetし直す
+          date = new Date(this.target.getTime());
+          date.setDate(1);
+        });
+        this.rows[i] = days;
+      });
+      //- 表示する必要があるときだけ6行目を表示
+      if (this.rows[5][0].month === this.target.getMonth() + 1) this.showSixth = true;
+      else this.showSixth = false; 
+      this.update();
+    };
+
+    this.setLog = () => {
+      this.rows.forEach(row => {
+        row.forEach(day => {
+          var logsTemp = [];
+          this.logs.forEach(log => {
+            if (moment(`${this.getTargetYear()}/${day.month}/${day.date}`).isSame(log.day, 'day')) {
+              logsTemp.push(log);
+            }
+          });
+          if (logsTemp.length > 0) day.logs = logsTemp;
+          if (moment(`${this.getTargetYear()}/${day.month}/${day.date}`).isSame(moment(), 'day')) {
+            this.setSelected(day);
+          }
+        });
+      });
+      this.update()
+    };
+
+    this.returnClass = (day) => {
+      if (day.month !== this.getTargetMonth()) return "bg-softgray";
+      else if (day.day === 0) return "bg-lightblue";
+      else if (day.day === 6) return "bg-pink";
+    }
+
+    this.getDay = (index) => {
+      return ['日', '月', '火', '水', '木', '金', '土'][index];
+    };
+
+    this.getTargetYear = () => {
+      return this.target.getFullYear();
+    };
+
+    this.getTargetMonth = () => {
+      return this.target.getMonth() + 1;
+    };
+
+    this.prev = () => {
+      this.target.setMonth(this.target.getMonth() - 1);
+      this.setUp();
+    };
+
+    this.next = () => {
+      this.target.setMonth(this.target.getMonth() + 1); 
+      this.setUp();
+    };
+
+    this.showLogs = (e) => {
+      this.rows.forEach(row => {
+        row.forEach(days => {
+          days.isSelected = false;
+        });
+      });
+      this.setSelected(e.item.day)
+      this.update();
+    }
+
+    this.setSelected = (day) => {
+      this.logsToShow = {
+        day: `${this.getTargetYear()}/${day.month}/${day.date}`,
+        logs: day.logs
+      };
+      day.isSelected = true;
+    };
+
+    this.addTraining = () => {
+      var modal = spat.modal.open('modal-menu-select');
+      modal.on('add', (item) => {
+        var selected = [];
+        //- 仮対応表示上だけ追加
+        if (item.length > 1) {
+          item.forEach(item => {
+            selected.push(item);
+          });
+        } else {
+          selected.push(item[0]);
+        }
+        spat.modal.alert('追加しました');
+        modal.close();
+        var modal_edit = spat.modal.open('modal-training-edit', {items: selected});
+      });
+    };
+
+    this.openModal = (e) => {
+      var selected = e.item.log;
+      var modal = spat.modal.open('modal-actionsheet', {type: 'training'});
+      modal.on('edit', () => {
+        modal.close();
+        var modal_edit = spat.modal.open('modal-training-edit', {items: selected});
+      });
+      modal.on('delete', () => {
+        spat.modal.alert('ここは追って実装');
+        modal.close();
+      });
+    }

@@ -1,0 +1,10 @@
+modal-training-edit(spat-animation='bottom')
+  div.s-full.bg-maingray.f.flex-column.relative(ref='modal')
+    module-header.flex-fixed(title='EDIT TRAINING', close='{close}')
+    div.p30.s-full
+      div(each='{item in opts.items}', data-is='item-training', item='{opts.items}')
+
+  script.
+    this.on('mount', () => {
+      debugger;
+    });

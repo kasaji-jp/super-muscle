@@ -1,24 +1,2 @@
 module-calendar
-  div.w-full.overflow-y-scroll
-    table.w-full
-      tr.w-full
-        th.s10(each='{day, i in days}', class='{"text-red" : i === 0} {"text-blue" : i === 6}') {dayLabel}
-      tr(each='{week in weeks}')
-        td(each='{day in week.days}')
-
-
-  script.
-    this.on('mount', () => {
-      var now = moment(new Date());
-      var year = now.getFullYear();
-      var month = now.getMonth() + 1;
-      var startDate = new Date(year, month - 1, 1);
-      var lastDayLastMonth = new Date(year, month - 1, 1);
-      var endDate = new Date(year, month, 0);
-      startDay = startDate.getDay();
-      var startWeek = lastDayLastMonth.subtract('day', startDay + 1);
-    });
-
-    this.next = () => {
-      this.current += 1;  
-    };
+  
