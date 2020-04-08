@@ -12,6 +12,7 @@ page-users-single(spat-animation="{is_mypage ? '' : 'slide'}")
           p.mb32 {user.data.profile}
           div.f.fh
             button.button.primary(if='{is_me}', onclick='{editProfile}') プロフィール編集
+            button.button.primary(if='{is_local}', onclick='{openAdmin}') 管理者ページ
 
     module-tabbar
 
@@ -26,6 +27,7 @@ page-users-single(spat-animation="{is_mypage ? '' : 'slide'}")
   script.
     
     this.on('show', async (e) => {
+      this.is_local = location.hostname === 'localhost';
       if (e.opts.screen_name) {
         this.is_mypage = false;
         this.update();
@@ -50,4 +52,8 @@ page-users-single(spat-animation="{is_mypage ? '' : 'slide'}")
 
     this.editProfile = () => {
       spat.modal.open('modal-user');
+    };
+
+    this.openAdmin = () => {
+      app.routeful.go('/admin');
     };

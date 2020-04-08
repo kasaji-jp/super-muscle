@@ -18,6 +18,9 @@
     '/mypage': {
       tag: 'page-users-single',
     },
+    '/admin': {
+      tag: 'page-admin',
+    },
     '/@:screen_name': {
       tag: 'page-users-single',
     },

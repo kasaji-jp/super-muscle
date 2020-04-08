@@ -1,0 +1,231 @@
+page-admin
+  div.flex.flex-column.h-full
+    module-header(title="ADMIN", back='{true}')
+    div.s-full.overflow-y-scroll.p20.relative
+      div.w100.fr.f.px10.absolute.t60.r0.fixed
+        div.bg-white.border.p10.circle
+          div.material-icons.fs20.text-main.cursor-pointer(onclick='{addItem}') add
+      div.w-full.text-center
+        select.bg-deepgray.p10.rounded-4.mb30(onchange='{selectType}', ref='type')
+          option(each='{subcollection in subcollections}', value='{subcollection}', selected='{subcollection === "trainings"}') {subcollection}
+      div.s-full
+        div.w-full.border-left.border-right.border-bottom.f.flex-between.bg-white(each='{item, i in items}', class='{"border-top" : i === 0}')
+          //- トレーニング表示
+          div.w-full.p10(if='{type === "trainings"}')
+            div.w-full.f.fm.mb4
+              div.f.flex-column.fc.mr20
+                img.s80.mb10.mxa.object-fit-contain.border(src='{item.data.image.url}')
+                label
+                  input.hide(type='file', onchange='{changeImage}', accept='image/*')
+                  div.w100.bg-deepgray.rounded-10.py10.f.fh
+                    span.bold.text-white 画像を選択
+              input.input.fs20.bold(value='{item.data.name}', ref='name')
+            div.fs12.mb10
+              p.mb6 説明文:
+              textarea.h100.input.w-full(value='{item.data.description}', ref='description') 
+            div.w-full.f.fs14.mb10
+              div.mr10.f.fm
+                div.mr6 部位:
+                select.border.p4.bg-softgray(ref='parts')
+                  option(value='normal', selected) --選択--
+                  option(each='{part in parts}', selected='{part === item.data.parts}') {part}
+              div.mr10.f.fm
+                div.mr6 公式:
+                select.border.p4.bg-softgray(ref='is_official')
+                  option(each='{status in [true, false]}', value='{status}', selected='{status === item.data.is_official}') {status}
+              div.f.fm
+                div.mr6 非公開:
+                select.border.p4.bg-softgray(ref='is_private')
+                  option(each='{status in [true, false]}', value='{status}', selected='{status === item.data.is_private}') {status}
+            div.w-full
+              div.text-center.w200.mxa.bg-sub.text-white.bold.rounded.f.fh.rounded-full.py10.cursor-pointer(onclick='{item.isNew ? addData : updateData}')
+                span {item.isNew ? '追加' : '保存'}
+
+
+          //- リスト表示
+          div.w-full.p10(if='{type === "lists"}')
+            input.input.fs20.bold.mb10(value='{item.data.name}', ref='name')
+            div.fs12.mb10
+              p.mb6 説明文:
+              textarea.h100.input.w-full.mb10(value='{item.data.description}', ref='description')
+            div.fs12.mb10.mr10 種目
+            div.f.fm.my6
+              select.px10.py6.border.mr10(ref='trainingToAdd')
+                option(value='normal' selected) --選択--
+                option(each='{training in trainingsAll}', value='{training.id}') {training.name}
+              div.p4.rounded-10.bold.bg-sub.f.fh.text-white.cursor-pointer.mr10(onclick='{addToList}')
+                span 追加
+              div.p4.rounded-10.bold.bg-main.f.fh.text-white.cursor-pointer(onclick='{deleteFromList}')
+                span 削除
+            div.py20.w-full
+              div.w-full.f.fm.my6.fs14.bold.text-sub.px4(each='{training, i in item.data.trainings}')
+                div.mr10.cursor-pointer 種目{i + 1} :{training.name}
+                input(type='checkbox', onchange='{selectToDelete}')
+            div.f
+              div.mr10.f.fm
+                div.mr6 公式:
+                select.border.p4.bg-softgray(ref='is_official')
+                  option(each='{status in [true, false]}', value='{status}', selected='{status === item.data.is_official}') {status}
+              div.f.fm
+                div.mr6 非公開:
+                select.border.p4.bg-softgray(ref='is_private')
+                  option(each='{status in [true, false]}', value='{status}', selected='{status === item.data.is_private}') {status}
+            div.w-full.pt20
+              div.text-center.w200.mxa.bg-sub.text-white.bold.rounded.f.fh.rounded-full.py10.cursor-pointer(onclick='{item.isNew ? addData : updateData}')
+                span {item.isNew ? '追加' : '保存'}
+
+  script.
+    this.subcollections = ['trainings', 'lists', 'users'];
+
+    this.on('mount', async() => {
+      this.items = await app.store.trainings.getAll();
+      this.type = 'trainings';
+      this.update();
+    });
+
+
+    this.selectType = async() => {
+      this.type = this.refs.type.value;
+      var returnItems = () => {
+        return {
+        'trainings': app.store.trainings.getAll(),
+        'lists': app.store.lists.getDefault(),
+        'users': console.log('bbb'),
+        }[this.type];
+      };
+      this.items = [];
+      this.items = await returnItems();
+      if (this.type === 'lists') this.getTrainingsAll();
+      this.update();
+    };
+
+    //- 一旦コメントアウト
+    //- this.getParts = () => {
+    //-   var parts = this.items.map(item => {
+    //-     if (item.isNew) return;
+    //-     return item.data.parts;
+    //-   });
+    //-   return _.uniq(parts, parts => parts);
+    //- };
+
+    this.parts = ['chest', 'legs', 'arms', 'abdominal', 'shoulders', 'back'];
+
+    this.changeImage = async(e) => {
+      if (!e.target.value || !e.target.files[0]) return;
+      var file = e.target.files[0];
+      var base64 = await app.utils.fileToBase64(file);
+      //- this.file = file;
+      if (!base64) return;
+      e.item.item.data.image = {
+        url: base64,
+        file: file,
+      };
+      this.update();
+      e.target.value = '';
+    };
+
+    this.updateData = async(e) => {
+      if (this.type === 'trainings') {
+        e.item.item.data = await this.getQueryTrainings(e.item);
+        app.store.trainings.update(e.item.item);
+      }
+      else if (this.type === 'lists') {
+        e.item.item.data = await this.getQueryLists(e.item);
+        app.store.lists.update(e.item.item);
+      }
+      this.update();
+    };
+
+    this.addItem = () => {
+      var item = {isNew: true};
+      if (!this.items) this.items = [];
+      this.items.push(item);
+      this.update();
+    };
+
+    this.addData = async(e) => {
+      if (this.type === 'trainings') {
+        e.item.item.data = await this.getQueryTrainings(e.item);
+        app.store.trainings.post(e.item.item);
+      }
+      else if (this.type === 'lists') {
+        e.item.item.data = await this.getQueryLists(e.item);
+        app.store.lists.post(e.item.item);
+      }
+      this.update();
+    };
+
+    this.getQueryTrainings = async(item) => {
+      var url = await app.utils.uploadTrainingImageToStorage(item, 'trainings');
+      return {
+        description: this.refs.description[item.i].value,
+        name: this.refs.name[item.i].value,
+        parts: this.refs.parts[item.i].value,
+        is_private: this.refs.is_private[item.i].value === 'true' ? true : false,
+        is_official: this.refs.is_official[item.i].value === 'true' ? true : false,
+        image: { url : url.url },
+      };
+    };
+
+    this.getQueryLists = async(item) => {
+      return {
+        description: this.refs.description[item.i].value,
+        name: this.refs.name[item.i].value,
+        is_private: this.refs.is_private[item.i].value === 'true' ? true : false,
+        is_official: this.refs.is_official[item.i].value === 'true' ? true : false,
+        trainings: item.item.data.trainings,
+      };
+    };
+
+    this.getTrainingsAll = async() => {
+      var trainingTemp = await app.store.trainings.getAll();
+      this.trainingsAll = trainingTemp.map(training => {
+        return {id: training.id, name: training.data.name};
+      })
+      this.update();
+    }
+
+    this.addToList = (e) => {
+      if (!e.item.item.data) e.item.item.data = {};
+      if (!e.item.item.data.trainings || e.item.item.data.trainings.length === 0) {
+        e.item.item.data.trainings = [];
+      } else if (Array.isArray(e.item.item.data.trainings) === false) {
+        e.item.item.data.trainings = this.changeToArray(e.item.item.data.trainings);
+      }
+      if (typeof this.refs.trainingToAdd.value === 'string') {
+        var id = this.refs.trainingToAdd.value;
+        this.refs.trainingToAdd.value = 'normal';
+      } else {
+        var id = this.refs.trainingToAdd[e.item.i].value;
+        this.refs.trainingToAdd[e.item.i].value = 'normal';
+      }
+      var item = this.trainingsAll.find(training => training.id === id);
+      e.item.item.data.trainings.push(item);
+      this.update();
+    };
+
+    this.deleteFromList = (e) => {
+      if (!typeof e.item.item.data.trainings === 'array') {
+        e.item.item.data.trainings = this.changeToArray(e.item.item.data.trainings);
+      }
+      e.item.item.data.trainings = e.item.item.data.trainings.filter(training => !training.checked || !training.checked === true);
+      this.update();
+    };
+
+    this.ChangeToArray = (trainings) => {
+      //- firestoreからのデータは一旦arrayに変換
+      var valuesTemp = [];
+      Object.values(trainings).forEach(value => {
+        valuesTemp.push(value);
+      });
+      return valuesTemp;
+    };
+
+    this.selectToDelete = (e) => {
+      if (!e.item.training.checked) {
+        e.item.training.checked = true;
+        return;
+      }
+      e.item.training.checked = !e.item.training.checked;
+    };
+
