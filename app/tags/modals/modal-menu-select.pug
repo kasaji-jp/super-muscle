@@ -199,7 +199,7 @@ modal-menu-select(spat-animation='bottom')
     };
 
     this.on('mount', async() => {
-      console.log(this.opts.contents);
+      var hoge = await app.store.trainings.getDefault();
       if(this.opts.contents && this.opts.contents.length > 0) {
         this.added = this.opts.contents;
         this.update();

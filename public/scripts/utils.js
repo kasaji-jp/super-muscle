@@ -9,7 +9,6 @@
           var canvas = document.createElement('canvas');
           canvas.width = img.width;
           canvas.height = img.height;
-    
           var ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
           var base64 = canvas.toDataURL('image/jpg');
@@ -19,8 +18,30 @@
         img.src = url;
       });
     },
+    fileToBase64: (file) => {
+      return new Promise(function(resolve) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          resolve(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    },
+    uploadTrainingImageToStorage: (item, type) => {
+      return new Promise(async (resolve, reject) => {
+        let imageRef = firebase.storage().ref(type).child(item.item.id).child('images').child(moment().format('X'));
+        imageRef.put(item.item.data.image.file).then(async (ss) => {
+          var url = await ss.ref.getDownloadURL();
+          resolve({
+            url: url,
+            snapshot: ss,
+          });
+        }).catch((err) => {
+          reject(err);
+        });
+      });
+    }, 
     uploadFile: () => {
-  
     },
 
     // 登録/ログインを表示
