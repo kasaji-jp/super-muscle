@@ -64,9 +64,9 @@
         return trainings;
       },
       getDefault: async() => {
-        var trainings = await flarebase.store.db.collection('trainings').where('is_official', '==', true).orderBy('created_at', 'desc').where('is_official', '==', true).getWithRelation();
+        // var trainings = await flarebase.store.db.collection('trainings').where('is_official', '==', true).orderBy('created_at', 'desc').where('is_official', '==', true).getWithRelation();
         // var trainings = await flarebase.store.db.collection('trainings').where('is_official', '==', true).orderBy('created_at', 'desc').getWithRelation();
-        return trainings;
+        // return trainings;
       },
       post: async(item) => {
         var ref = flarebase.store.db.collection('trainings');

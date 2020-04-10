@@ -4,7 +4,7 @@ item-workout-list
       div.absolute.trbl0.f.fh.bg-clearblack.z2(if='{opts.item.disabled}')
         span.text-white.fs18.bold 登録済み
       img.block.s30.mr40(src='{opts.item.image}', if='{opts.item.image}')
-      div.fs18.bold {opts.item.label}
+      div.fs18.bold {opts.item.label || opts.item.data.name}
       div.absolute.t0.r0.h-full.f.fh.px10.transition(if='{!opts.select || !opts.type}', class='rotate{open ? "-n90deg" : "90deg"}')
         i.icon-arrow_right
       div.absolute.t0.r0.h-full.f.fh.px10(if='{opts.type && opts.select}', onclick='{updateList}')
@@ -12,15 +12,16 @@ item-workout-list
           i.icon-check_stroke.text-white
     div.transition.max-h0.overflow-hidden(ref='excercises')
       div(ref='body')
-        div.f.flex-between.fm.p6.w-full.px20.py10.border-bottom.relative(each='{content in opts.item.contents}', onclick='{opts.select ? updateItems : movePage}')
-          div.f
-            img.block.s30.mr20(src='{content.image}')
-            div
-              div {content.label}
-              div.f.text-deepgray.fs8.px2(if='{content.history}')
-                p.mr6 {content.history.day}
-                p.mr6 {content.history.weight}
-                p {content.history.rep}回×{content.history.set}セット
+        div.f.flex-between.fm.p6.w-full.px20.py10.border-bottom.relative(each='{content in opts.item.contents || opts.item.data.trainings}', onclick='{opts.select ? updateItems : movePage}')
+          div.f.w-full
+            img.block.s30.mr20(src='{content.data.image.url}')
+            div.s-full
+              div {content.data.name}
+              div.f.text-deepgray.fs8.px2(if='{content.data.history}')
+                p.mr6 {content.data.history.day}
+                p.mr6 {content.data.history.weight}
+                p {content.data.history.rep}回×{content.data.history.set}セット
+              div.w-full.fs8.text-deepgray.py4(if='{!content.data.history}') データなし
           div.s20.f.fh(class='bg-{content.selected ? "sub" : "deepgray"}', if='{opts.select}')
             i.icon-check_stroke.text-white
           div.absolute.trbl0.f.fh.bg-clearblack(if='{content.disabled}')
@@ -59,7 +60,8 @@ item-workout-list
       //- modal内の他のitemで選択済みの項目を選択済みに
       if (this.opts.selected_items && this.opts.selected_items.length > 0) {
         var selectedIds = this.opts.selected_items.map(item => item.id);
-        this.opts.item.contents.forEach(item => {
+        var items = this.opts.item.contents || this.item.data.trainings;
+        items.forEach(item => {
           //- 一旦全部の選択状態をリセット
           if (!item.disabled) {
             item.selected = false;
@@ -72,15 +74,15 @@ item-workout-list
         });
         //- リストのアイテム選択状況に応じてリストの表示に反映
         if (this.opts.type && !this.opts.item.disabled) {
-          var sortedContents = this.opts.item.contents;
+          var sortedContents = items;
           selectedIds.forEach(id => {
             sortedContents = sortedContents.filter(item => item.id !== id);
           });
-          var disabledId = this.opts.item.contents.filter(item => item.disabled).map(item => item.id);
+          var disabledId = items.filter(item => item.disabled).map(item => item.id);
           disabledId.forEach(id => {
             sortedContents = sortedContents.filter(item => item.id !== id);
           });
-          if (sortedContents.length !== this.opts.item.contents.length && sortedContents.length !== 0) {
+          if (sortedContents.length !== items.length && sortedContents.length !== 0) {
             this.isSelectedList = false;
           } else if (sortedContents.length === 0) {
             this.isSelectedList = true;

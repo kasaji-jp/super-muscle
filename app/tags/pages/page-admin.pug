@@ -133,7 +133,8 @@ page-admin
     //-   return _.uniq(parts, parts => parts);
     //- };
 
-    this.parts = ['chest', 'legs', 'arms', 'abdominal', 'shoulders', 'back'];
+    this.parts = app.utils.getBodyParts();
+    this.parts = Object.keys(this.parts);
 
     this.changeImage = async(e) => {
       if (!e.target.value || !e.target.files[0]) return;

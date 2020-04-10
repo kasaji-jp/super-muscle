@@ -1,7 +1,7 @@
 item-training
   div.p20.rounded-10.bg-white.box-shadow.mb20
     div.f.flex-between.fm.border-bottom.bw3.mb8.pb8
-      div.bold.fs18.flex-fixed {opts.item.label}
+      div.bold.fs18.flex-fixed {opts.item.data.name}
       div.f.fh.cursor-pointer(if='{isDone}', onclick='{edit}')
         i.icon-pen.text-sub.fs18
       div.f.fh.flex-column.cursor-pointer.text-green.px4(if='{!isDone}', onclick='{timerOpen}')
@@ -23,7 +23,7 @@ item-training
             div.fs32.pl40.bold.w100(if='{isDone}') {data.set}
             p.fs12 セット
         div.s100.f.fh
-          img.object-fit-cover(src='{opts.item.image}')
+          img.object-fit-cover(src='{opts.item.data.image.url}')
       div.transition.overflow-hidden.max-h0(ref='timerBox')
         div(data-is='atom-timer')
       button.p10.rounded-full.f.fh.w200.mxa.mt10(class='bg-{isDone ? "palegray" : "sub"} {"cursor-pointer" : !isDone}', onsubmit='{done}', type='submit')
@@ -34,6 +34,7 @@ item-training
   script.
     this.on('mount', () => {
       this.isDone = false;
+      //- debugger;
       this.timerOpened = false;
     });
 
