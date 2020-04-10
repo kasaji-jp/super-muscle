@@ -83,12 +83,47 @@
         'https://firebasestorage.googleapis.com/v0/b/chat-rabee-jp.appspot.com/o/dummies%2Friver%2Fmatthew-feeney-75IV0_EFh0c-unsplash.jpg?alt=media&token=43c95cd3-8490-43dc-8cdb-a2297a911704',
       ];
     },
+
+    getBodyParts: () => {
+      return {
+        chest: {label: '胸筋', image: '/static/images/sample.png'}, 
+        legs: {label: '脚', image: '/static/images/sample.png'}, 
+        arms: {label: '腕', image: '/static/images/sample.png'}, 
+        abdominal: {label: '腹筋', image: '/static/images/sample.png'}, 
+        shoulders: {label: '肩', image: '/static/images/sample.png'}, 
+        back: {label: '背筋', image: '/static/images/sample.png'}
+      };
+    },
     
     keyboardShrink: (isShrink) => {
       if (window.cordova && Keyboard) {
         Keyboard.shrinkView(isShrink);
       }
-    }
+    },
+
+    getTrainingByParts: async() => {
+      //- リストに渡す用部位ごとのトレーニングリストを作成
+      var trainingsAll = await app.store.trainings.getAll();
+      var parts = app.utils.getBodyParts();
+      var keys = Object.keys(parts);
+      Object.values(parts).forEach( (part, i) => {
+        part.contents = trainingsAll.filter(training => training.data.parts === keys[i]);
+      });
+      return parts;
+    },
+
+    getLists: async() => {
+      //- リストデータ作成
+      var trainingsAll = await app.store.trainings.getAll();
+      var lists = await app.store.lists.getDefault();
+      lists.forEach(list => {
+        list.data.trainings.forEach((listItem, i) => {
+          var current = trainingsAll.find(training => training.id === listItem.id );
+          list.data.trainings[i] = current;
+        });
+      });
+      return lists;
+    },
   };
 
 })();

@@ -8,11 +8,11 @@ modal-menu-select(spat-animation='bottom')
         div.text-center.mb30
           span.text-main.border-bottom.border-main.bw4.pb4.fw6 {page.title}
         div.h-full.overflow-scroll(if='{i === 0}')
-          div(data-is='item-workout-list', each='{item in dummies}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}')
+          div(data-is='item-workout-list', each='{item in trainings}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}')
         div.h-full.overflow-scroll(if='{i === 1}')
-          div(data-is='item-workout-list', each='{item in mylist}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}', type='mylist')
+          div(data-is='item-workout-list', each='{item in lists}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}', type='mylist')
         div.h-full.overflow-scroll(if='{i === 2}')
-          div(data-is='item-workout-list', each='{item in dummies}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}')
+          div(data-is='item-workout-list', each='{item in trainings}', item='{item}', selected_items='{selectedItems}', added='{added}', select='{true}')
     button.absolute.z2.r0.l0.b10.mxa.button.bg-main.w200.p20.rounded-full.text-white.bold.font-impact(onclick='{add}') add
 
 
@@ -23,181 +23,6 @@ modal-menu-select(spat-animation='bottom')
       {title: 'さがす'},
     ];
 
-    this.dummies = {
-      arms: {
-        label: '腕',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '0',
-            label: 'コンセントレーションカール',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '1',
-            label: 'インクラインカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '2',
-            label: 'ダンベルカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '3',
-            label: 'アームカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '4',
-            label: 'ダンベルフレンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '5',
-            label: 'トライセップスキックバック',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      chest: {
-        label: '胸筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '7',
-            label: 'インクラインダンベルプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '9',
-            label: 'ダンベルプルオーバー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '11',
-            label: 'フライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      abdominals: {
-        label: '腹筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '12',
-            label: 'ウェイテッドクランチ',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '13',
-            label: 'サイドべント',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '14',
-            label: 'シットアップ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '15',
-            label: 'アブローラー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '16',
-            label: 'アブクランチ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    };
-
-    this.mylist = {
-      big3: {
-        label: 'ビッグ3',
-        list_id: '0',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '17',
-            label: 'スクワット',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '18',
-            label: 'デッドリフト',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      mychestlist: {
-        label: 'my胸筋セット',
-        list_id: '1',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    };
-
     this.on('mount', async() => {
       var hoge = await app.store.trainings.getDefault();
       if(this.opts.contents && this.opts.contents.length > 0) {
@@ -206,6 +31,8 @@ modal-menu-select(spat-animation='bottom')
       }
       this.selectedItems = [];
       this.current = 0;
+
+      //- flickable
       var target = this.refs.flickTarget;
       //- 暫定対応
       setTimeout(() => {
@@ -226,6 +53,10 @@ modal-menu-select(spat-animation='bottom')
         this.update();
         $(target).stop().animate({scrollLeft : this.BASE_WIDTH * this.current}, 256);
       });
+
+      this.trainings = await app.utils.getTrainingByParts();
+      this.lists = await app.utils.getLists();
+      this.update();
     });
 
 

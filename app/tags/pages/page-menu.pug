@@ -9,9 +9,9 @@ page-menu
         div.text-center.mb30
           span.text-main.border-bottom.border-main.bw4.pb4.fw6 {page.title}
         div.h-full.overflow-scroll.w-full(if='{i === 0}')
-          div(data-is='item-workout-list', each='{item in dummies}', item='{item}')
+          div(data-is='item-workout-list', each='{item in trainings}', item='{item}')
         div.h-full.overflow-scroll.w-full(if='{i === 1}')
-          div(data-is='item-workout-list', each='{item in mylist}', item='{item}', type='mylist')
+          div(data-is='item-workout-list', each='{item in lists}', item='{item}', type='mylist')
     module-tabbar
 
   script.
@@ -19,188 +19,12 @@ page-menu
 
     this.selectedItems = [];
 
-    //- modal-menu-selectにも同様のobjが
     this.pages = [
       {title: 'マイトレーニング'},
       {title: 'マイメニュー'},
     ];
 
-    this.dummies = {
-      arms: {
-        label: '腕',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '0',
-            label: 'コンセントレーションカール',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '1',
-            label: 'インクラインカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '2',
-            label: 'ダンベルカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '3',
-            label: 'アームカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '4',
-            label: 'ダンベルフレンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '5',
-            label: 'トライセップスキックバック',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      chest: {
-        label: '胸筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '7',
-            label: 'インクラインダンベルプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '9',
-            label: 'ダンベルプルオーバー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '11',
-            label: 'フライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      abdominals: {
-        label: '腹筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '12',
-            label: 'ウェイテッドクランチ',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '13',
-            label: 'サイドべント',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '14',
-            label: 'シットアップ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '15',
-            label: 'アブローラー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '16',
-            label: 'アブクランチ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    };
-
-    this.mylist = {
-      big3: {
-        label: 'ビッグ3',
-        list_id: '0',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '17',
-            label: 'スクワット',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '18',
-            label: 'デッドリフト',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      mychestlist: {
-        label: 'my胸筋セット',
-        list_id: '1',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    };
-
-    this.on('mount', () => {
+    this.on('mount', async() => {
       setTimeout(() => {
         this.BASE_WIDTH = target.offsetWidth;
       }, 512);
@@ -209,6 +33,7 @@ page-menu
       this.flickable.on('move', (e)=> {
         target.scrollLeft -= e.dx;
       });
+
       this.flickable.on('end', (e) => {
         var rate = e.dx / 5 + e.mx / (this.BASE_WIDTH * 0.5);
         if (rate >= 1 && this.current >= 1 ) {
@@ -220,6 +45,10 @@ page-menu
         this.update();
         $(target).stop().animate({scrollLeft : this.BASE_WIDTH * this.current}, 256);
       });
+
+      this.trainings = await app.utils.getTrainingByParts();
+      this.lists = await app.utils.getLists();
+      this.update();
     });
 
     this.on('openModal', () => {
