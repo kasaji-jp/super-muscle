@@ -44,3 +44,7 @@ atom-removable
     this.closeRemovable = () => {
       this.refs.item.style.transform = 'translateX(0px)';
     };
+
+    this.done = (data) => {
+      this.parent.addData(data);
+    };
