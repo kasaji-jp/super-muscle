@@ -3,7 +3,10 @@ page-index
     module-header(title="TODAY'S WORK OUT", add='{true}')
     div.h-full.overflow-scroll(ref='body')
       div.s-full.f.fh.py20(if='{!todays_menu.length > 0}') 筋トレしろ
-      div.container.px20.pt20
+      div.container.px20.pt20.relative
+        div.absolute.s60.bg-main.text-white.f.fh.circle.flex-column.b60.r10.z2.fixed(if='{todays_menu.length > 0}', onclick='{end}')
+          i.icon-check_stroke.fs16
+          div Finish!
         div(data-is='atom-removable', each='{item in todays_menu}', if='{todays_menu.length > 0}', item='{item}')
           div(data-is='item-training', item='{opts.item}')
     module-tabbar
@@ -11,6 +14,7 @@ page-index
   script.
     this.on('mount', async () => {
       this.todays_menu = [];
+      this.datas = [];
     });
 
     this.on('openModal', ()=> {
@@ -34,3 +38,15 @@ page-index
       spat.modal.alert('削除しました');
       this.update();
     };
+
+    this.addData = (data) => {
+      this.datas.push(data);
+    };
+
+    this.end = async() => {
+      var promises = this.datas.map(data => {
+        return app.store.logs.post(data);
+      });
+      await Promise.all(promises)
+      .then(spat.modal.alert('登録が完了しました'));
+    }

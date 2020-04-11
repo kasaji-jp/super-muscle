@@ -165,6 +165,18 @@
         }        
       },
     },
+    logs: {
+      post: async(item) => {
+        var ref = flarebase.store.db.collection('logs');
+        try{
+          ref.add(item)
+        }
+        catch(error) {
+          window.alert('更新に失敗しました');
+          return;
+        }
+      },
+    },
   }
 
 })();

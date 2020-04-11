@@ -35,9 +35,10 @@ item-workout-list
       this.open = false;
       this.isSelectedList = false;
       this.isSelectedItem = false;
+      var items = this.opts.item.contents || this.item.data.trainings;
       if (this.opts.added && this.opts.added.length > 0) {
         var addedIds = this.opts.added.map(item => item.id);
-        this.opts.item.contents.forEach(item => {
+        items.forEach(item => {
           addedIds.forEach(id => {
             if(id === item.id) {
               item.disabled = true;
@@ -47,9 +48,9 @@ item-workout-list
         });
         if (opts.type) {
           //- mylistのitem全部がdisabledの時はlistもdisabledする
-          var disabledInList = this.opts.item.contents.filter(item => item.disabled);
-          if (disabledInList.length === this.opts.item.contents.length) {
-            this.opts.item.disabled = true;
+          var disabledInList = items.filter(item => item.disabled);
+          if (disabledInList.length === items.length) {
+            this.item.data.disabled = true;
             this.isSelectedList = true;
           }
         }

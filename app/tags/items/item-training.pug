@@ -8,22 +8,45 @@ item-training
         i.icon-timer.fs18.mb2
         span.fs8 {timerOpened ? 'off' : 'on'}
     form(onsubmit='{done}')
-      div.f.flex-between.mb20
-        div.w-full
-          div.f.fb.mb6
-            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.weight}', ref='weight', required)
-            div.fs32.pl40.bold.w100(if='{isDone}') {data.weight}
-            p.fs12 kg
-          div.f.fb.mb6
-            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.rep}', ref='rep', required)
-            div.fs32.pl40.bold.w100(if='{isDone}') {data.rep}
-            p.fs12 回
-          div.f.fb.mb6
-            input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.set}', ref='set', required)
-            div.fs32.pl40.bold.w100(if='{isDone}') {data.set}
-            p.fs12 セット
-        div.s100.f.fh
-          img.object-fit-cover(src='{opts.item.data.image.url}')
+      div.w-full
+        div.w-full.f.fh.fs14.py8
+          div.mr4 重量/回数:
+          select.py4.px8.bg-softgray.rounded-4(ref='types', onchange='{update}')
+            option(each='{type in types}', value='{type.value}') {type.name}
+        div.f.flex-between.mb20
+          div.w-full(if='{refs.types.value === "normal"}')
+            div.f.fb.mb6
+              input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.weight}', ref='weight', required)
+              div.fs24.pl40.bold.w100(if='{isDone}') {data.weight}
+              p.fs12 kg
+            div.f.fb.mb6
+              input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.rep}', ref='rep', required)
+              div.fs24.pl40.bold.w100(if='{isDone}') {data.rep}
+              p.fs12 回
+            div.f.fb.mb6
+              input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.set}', ref='set', required)
+              div.fs24.pl40.bold.w100(if='{isDone}') {data.set}
+              p.fs12 セット
+          div.w-full(if='{refs.types.value === "customize"}')
+            div.w-full.f.fr(if='{!isDone}')
+              div.f.fh.p4(onclick='{addSet}')
+                div.material-icons add
+              div.f.fh.p4(onclick='{removeSet}')
+                div.material-icons remove
+            div.w-full.f.ft(each='{i in _.range(sets)}')
+              div.fs20.bold.text-sub.mr10.pt6 {i + 1}:
+              div.w-full.mb10
+                div.f.fb.mb6
+                  input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.trainings[i].weight}', ref='weight', required)
+                  div.fs24.pl40.bold.w100(if='{isDone}') {data.trainings[i].weight}
+                  p.fs12 kg
+                div.f.fb.mb6
+                  input.p6.text-center.rounded-5.mr10.bg-white.border(if='{!isDone}', onfocus='{closeRemovable}', type='tel', value='{data.trainings[i].rep}', ref='rep', required)
+                  div.fs24.pl40.bold.w100(if='{isDone}') {data.trainings[i].rep}
+                  p.fs12 回
+
+          div.s100.f.fh
+            img.object-fit-cover(src='{opts.item.data.image.url}')
       div.transition.overflow-hidden.max-h0(ref='timerBox')
         div(data-is='atom-timer')
       button.p10.rounded-full.f.fh.w200.mxa.mt10(class='bg-{isDone ? "palegray" : "sub"} {"cursor-pointer" : !isDone}', onsubmit='{done}', type='submit')
@@ -34,21 +57,56 @@ item-training
   script.
     this.on('mount', () => {
       this.isDone = false;
-      //- debugger;
       this.timerOpened = false;
+      this.types = [
+        {name: '固定', value: 'normal'},
+        {name: '変動', value: 'customize'},
+      ];
+      //- カスタマイズ用デフォセット数
+      this.sets = 3;
+      this.update();
     });
+
+    this.addSet = () => {
+      this.sets++;
+    };
+
+    this.removeSet = () => {
+      this.sets--;
+    };
 
     this.done = (e) => {
       e.preventDefault();
-      this.isDone = !this.inDone;
+      this.isDone = !this.isDone;
       this.timerOpened = false;
       this.refs.timerBox.style.maxHeight = 0;
-      this.data = {
-        weight: this.refs.weight.value,
-        rep: this.refs.rep.value,
-        set: this.refs.set.value,
-      };
+      if (this.refs.types.value === "normal") {
+        this.data = {
+          training_id: this.opts.item.id,
+          weight: this.refs.weight.value,
+          rep: this.refs.rep.value,
+          set: this.refs.set.value,
+          type: this.refs.types.value,
+          created_at: moment().format('x')
+        };
+      } else {
+        var trainingData = [];
+        _.range(this.sets).forEach(set => {
+          trainingData.push({
+            weight: this.refs.weight[set].value,
+            rep: this.refs.rep[set].value,
+          });
+        });
+        this.data = {
+          training_id: this.opts.item.id,
+          trainings: trainingData,
+          type: this.refs.types.value,
+          updated_at: moment().format('x'),
+          created_at: moment().format('x')
+        };
+      }
       spat.modal.alert('Well done!!');
+      this.parent.done(this.data);
       this.update();
     };
 
