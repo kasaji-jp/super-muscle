@@ -107,9 +107,9 @@ item-workout-list
     this.updateList = (e) => {
       e.stopPropagation();
       this.isSelectedList = !this.isSelectedList;
-      var itemToSelect = this.opts.item.contents.filter(item => !item.disabled);
+      var itemToSelect = this.item.data.trainings.filter(item => !item.disabled);
       this.parent.toggleItems(itemToSelect, (this.isSelectedList ? 'add' : 'reduce') );
-      this.opts.item.contents.forEach(item => {
+      this.item.data.trainings.forEach(item => {
         if(item.disabled) return;
         if (this.isSelectedList) {
           item.selected = true;

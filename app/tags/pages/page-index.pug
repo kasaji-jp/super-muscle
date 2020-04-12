@@ -1,9 +1,10 @@
 page-index
   div.flex.flex-column.h-full
     module-header(title="TODAY'S WORK OUT", add='{true}')
-    div.h-full.overflow-scroll(ref='body')
-      div.s-full.f.fh.py20(if='{!todays_menu.length > 0}') 筋トレしろ
-      div.container.px20.pt20.relative
+    div.h-full.overflow-scroll.opacity-0(ref='body')
+      div.s-full.f.fh.py20(if='{!todays_menu.length > 0 && !isFinished}') 筋トレしろ
+      div.s-full.f.fh.py20(if='{isFinished}') 今日の筋トレは完了！お疲れ様！
+      div.container.px20.pt20.relative(if='{!isFinished && todays_menu.length > 0}')
         div.absolute.s60.bg-main.text-white.f.fh.circle.flex-column.b60.r10.z2.fixed(if='{todays_menu.length > 0}', onclick='{end}')
           i.icon-check_stroke.fs16
           div Finish!
@@ -15,6 +16,12 @@ page-index
     this.on('mount', async () => {
       this.todays_menu = [];
       this.datas = [];
+      this.isFinished = false;
+      this.logs = await app.store.logs.getMine();
+      this.logs = this.logs.filter(log => moment(+log.data.created_at).isSame(moment(), 'day'));
+      if (this.logs.length > 0) this.isFinished = true;
+      this.refs.body.classList.remove('opacity-0');
+      this.update();
     });
 
     this.on('openModal', ()=> {
@@ -47,6 +54,7 @@ page-index
       var promises = this.datas.map(data => {
         return app.store.logs.post(data);
       });
-      await Promise.all(promises)
-      .then(spat.modal.alert('登録が完了しました'));
+      await Promise.all(promises).then(spat.modal.alert('登録が完了しました'));
+      this.isFinished = true;
+      this.update();
     }

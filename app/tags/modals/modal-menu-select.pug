@@ -24,7 +24,7 @@ modal-menu-select(spat-animation='bottom')
     ];
 
     this.on('mount', async() => {
-      var hoge = await app.store.trainings.getDefault();
+
       if(this.opts.contents && this.opts.contents.length > 0) {
         this.added = this.opts.contents;
         this.update();
@@ -54,8 +54,10 @@ modal-menu-select(spat-animation='bottom')
         $(target).stop().animate({scrollLeft : this.BASE_WIDTH * this.current}, 256);
       });
 
+      var indicator = spat.modal.indicator();
       this.trainings = await app.utils.getTrainingByParts();
       this.lists = await app.utils.getLists();
+      indicator.close();
       this.update();
     });
 
