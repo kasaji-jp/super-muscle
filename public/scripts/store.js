@@ -176,6 +176,17 @@
           return;
         }
       },
+      getMine: async(item) => {
+        try {
+          // kari
+          var lists = await flarebase.store.db.collection('logs').getWithRelation();
+          return lists;
+        }
+        catch (error) {
+          spat.modal.alert('更新に失敗しました');
+          return;
+        }
+      },
     },
   }
 

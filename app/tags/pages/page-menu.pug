@@ -46,8 +46,10 @@ page-menu
         $(target).stop().animate({scrollLeft : this.BASE_WIDTH * this.current}, 256);
       });
 
+      var indicator = spat.modal.indicator();
       this.trainings = await app.utils.getTrainingByParts();
       this.lists = await app.utils.getLists();
+      indicator.close();
       this.update();
     });
 
