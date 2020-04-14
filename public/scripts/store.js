@@ -187,6 +187,10 @@
           return;
         }
       },
+      getByTrainingId: async(id) => {
+        var lists = await flarebase.store.db.collection('logs').where('training_id', '==', id).orderBy('done_at', 'asc').getWithRelation();
+        return lists;
+      },
       update: async(item) => {
         // debugger;
         var ref = flarebase.store.db.collection('logs').doc(item.id);
