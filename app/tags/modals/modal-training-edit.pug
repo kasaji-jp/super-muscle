@@ -1,9 +1,37 @@
 modal-training-edit(spat-animation='bottom')
   div.s-full.bg-maingray.f.flex-column.relative(ref='modal')
-    module-header.flex-fixed(title='EDIT TRAINING', close='{close}')
-    div.p30.s-full
-      div(each='{item in opts.items}', data-is='item-training', item='{opts.items}')
+    div.absolute.s60.bg-main.text-white.f.fh.circle.flex-column.b10.r10.z2.fixed(onclick='{post}')
+      i.icon-check_stroke.fs16
+      div add
+    module-header.flex-fixed(title='EDIT TRAINING', back='{true}')
+    div.p30.s-full.overflow-y-scroll
+      div(data-is='atom-removable', each='{item in opts.items}', item='{item}')
+        div(data-is='item-training', item='{opts.item}')
 
   script.
     this.on('mount', () => {
+      if (!this.opts.items) this.mount();
+      this.datas = [];
     });
+
+    this.addData = (item) => {
+      //- データを過去データに差し替え
+      item.data.done_at = moment(this.opts.date).format('x');
+      this.datas.push(item);
+    };
+
+    this.post = async() => {
+      if (this.opts.edit) {
+        var promises = this.datas.map(data => {
+          return app.store.logs.update(data);
+        });
+      } else {
+        var promises = this.datas.map(data => {
+          return app.store.logs.post(data);
+        });
+      }
+      await Promise.all(promises);
+      this.isFinished = true;
+      this.trigger('finish', this.opts.date);
+      this.close();
+    };
