@@ -11,7 +11,7 @@ page-calendar
         div.row.pb8
           div.col-day.bold.fs14.text-center(each='{index in _.range(7)}') {getDay(index)}
         div.row.w-full.border-bottom(each='{row, i in rows}', class='{"border-top" : i === 0}', if='{i !== 5 || showSixth}')
-          div.col-day.text-center.h50.border-right(each='{day in row}', class='{returnClass(day)} {day.isSelected ? "bw3 border border-sub" : "p3"}', onclick='{showLogs}') 
+          div.col-day.text-center.h50.border-right(each='{day in row}', class='{returnClass(day)} {day.isSelected ? "bw3 border border-sub" : "p3"}', onclick='{setPosition}') 
             span {day.date}
             div.s-full.f.fh(if='{day.logs}')
               i.icon-check_stroke.text-main.fs18
@@ -21,14 +21,16 @@ page-calendar
       div.w-full.pt4.py10.f.flex-between.border-bottom(each='{log in logsToShow.logs}', if='{logsToShow.logs}')
         div.w-full.f
           //- 本番ではtrainingidで画像を引っ張ってくる
-          img.s40.mr10(src='/static/images/sample.png')
+          img.s40.mr10(src='{log.data.image}')
           div.w-full
-            div.bold.fs16.mb4 {log.training}
-            div.fs14 {log.weight}kg × {log.rep}回 × {log.set}セット
+            div.bold.fs16.mb4 {log.data.name}
+            div.fs14(if='{log.data.type === "normal"}') {log.data.weight}kg × {log.data.rep}回 × {log.data.set}セット
+            div.fs12(if='{log.data.type === "customize"}', each='{training, i in log.data.trainings}')
+              span {i + 1}セット目: {training.weight}kg × {training.rep}回
         div.f.fh.cursor-pointer(onclick='{openModal}')
           i.icon-pen.text-sub.fs18
 
-      div.s-full.f.fh.py30(if='{!logsToShow.logs}')
+      div.f.fh.py30(if='{!logsToShow.logs}')
         span 記録はまだありません。
 
       div.w-full.py10
@@ -45,415 +47,11 @@ page-calendar
     }
 
   script.
-    this.logs = [
-      {
-        day: '2018/1/4',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2019/4/4',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2019/12/4',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/4',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/5',
-        weight: '40',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/6',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/7',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/8',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/9',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/10',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/11',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/12',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/13',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/14',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/15',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/16',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/17',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/1/18',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/4',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/5',
-        weight: '40',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/6',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/7',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/8',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/9',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/10',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/11',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/12',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/13',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/14',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/15',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/16',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/17',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/2/18',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/5',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/6',
-        weight: '80',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/7',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/8',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/9',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/10',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/11',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/12',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/13',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/14',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/15',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/16',
-        weight: '40',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/17',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/18',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/24',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/25',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/26',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/26',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'スクワット',
-      },
-      {
-        day: '2020/3/27',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/27',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'ベンチプレス',
-      },
-      {
-        day: '2020/3/27',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'デッドリフト',
-      },
-      {
-        day: '2020/3/29',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/30',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-      {
-        day: '2020/3/31',
-        weight: '35',
-        rep: '10',
-        set: '4',
-        training: 'コンセントレーションカール',
-      },
-    ];
-
-    this.on('mount', () => {
+    this.on('mount', async() => {
       //- todo- 戻って登録もできる,ログあるところ表示
       this.target = new Date();
+      this.logs = await app.store.logs.getMine();
       this.setUp();
-      this.rows.forEach(row => {
-        row.forEach
-      });
       this.update();
     });
 
@@ -486,7 +84,7 @@ page-calendar
           date.setDate(dateTemp);
           day.date = date.getDate();
           day.month = date.getMonth() + 1;
-          //- 表示中年月の1日にsetし直す
+          //- 表示中年月の1日にsetし直す forEachの次の為
           date = new Date(this.target.getTime());
           date.setDate(1);
         });
@@ -498,12 +96,13 @@ page-calendar
       this.update();
     };
 
+    //- 日にちごとににログ情報紐付け
     this.setLog = () => {
       this.rows.forEach(row => {
         row.forEach(day => {
           var logsTemp = [];
           this.logs.forEach(log => {
-            if (moment(`${this.getTargetYear()}/${day.month}/${day.date}`).isSame(log.day, 'day')) {
+            if (moment(`${this.getTargetYear()}/${day.month}/${day.date}`).isSame(moment(+log.data.done_at), 'day')) {
               logsTemp.push(log);
             }
           });
@@ -544,13 +143,14 @@ page-calendar
       this.setUp();
     };
 
-    this.showLogs = (e) => {
+    //- タップした日のログを表示
+    this.setPosition = (e) => {
       this.rows.forEach(row => {
         row.forEach(days => {
           days.isSelected = false;
         });
       });
-      this.setSelected(e.item.day)
+      this.setSelected(e.item.day);
       this.update();
     }
 
@@ -562,6 +162,38 @@ page-calendar
       day.isSelected = true;
     };
 
+    //- モーダルから戻ってきた後に選択していた日付にfocus
+    this.focusOnSelected = (date) => {
+      this.rows.forEach(row => {
+        row.forEach(days => {
+          days.isSelected = false;
+          if (days.month === moment(date).get('month') + 1 && days.date === moment(date).get('date')) {
+            days.isSelected = true;
+          }
+        });
+      });
+      var selectedLogs = [];
+      this.logs.forEach(log => {
+        if (moment(date).isSame(moment(+log.data.done_at), 'day')) {
+          selectedLogs.push(log);
+        }
+      });
+      this.logsToShow = {
+        day: date,
+        logs: selectedLogs,
+      };
+      this.update();
+    };
+
+    //- focus+logのfirestore変更内容反映
+    this.logsUpdate = async(date) => {
+      this.logs = await app.store.logs.getMine();
+      this.setUp();
+      //- 選択していた日付にfocus
+      this.focusOnSelected(date);
+    };
+
+    //- 前日付を遡って登録するための関数
     this.addTraining = () => {
       var modal = spat.modal.open('modal-menu-select');
       modal.on('add', (item) => {
@@ -574,21 +206,38 @@ page-calendar
         } else {
           selected.push(item[0]);
         }
-        spat.modal.alert('追加しました');
         modal.close();
-        var modal_edit = spat.modal.open('modal-training-edit', {items: selected});
+        var modal_edit = spat.modal.open('modal-training-edit', {items: selected, date: this.logsToShow.day});
+        modal_edit.on('finish', async(date) => {
+          this.logsUpdate(date);
+        });
       });
+      this.update();
     };
 
+    //- すでに登録ずみトレーニングの編集削除
     this.openModal = (e) => {
-      var selected = e.item.log;
+      var selected = [];
+      //- データ受け渡しの為arrayで
+      selected.push(e.item.log);
+      var training
       var modal = spat.modal.open('modal-actionsheet', {type: 'training'});
       modal.on('edit', () => {
         modal.close();
-        var modal_edit = spat.modal.open('modal-training-edit', {items: selected});
+        var modal_edit = spat.modal.open('modal-training-edit', {items: selected, edit: true, date: this.logsToShow.day});
+        modal_edit.on('finish', async(date) => {
+          this.logsUpdate(date);
+        });
+        this.update()
       });
       modal.on('delete', () => {
-        spat.modal.alert('ここは追って実装');
-        modal.close();
+        spat.modal.confirm('このログを削除してもよろしいですか?').on('confirm', async() => {
+          //- debugger;
+          await app.store.logs.delete(selected[0]);
+          this.logsUpdate(this.logsToShow.day);
+          this.close();
+        });
       });
+
+      this.update();
     }

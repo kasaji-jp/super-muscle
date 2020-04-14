@@ -169,7 +169,7 @@
       post: async(item) => {
         var ref = flarebase.store.db.collection('logs');
         try{
-          ref.add(item)
+          ref.add(item.data).then(spat.modal.alert('登録しました'));
         }
         catch(error) {
           window.alert('更新に失敗しました');
@@ -187,6 +187,38 @@
           return;
         }
       },
+      update: async(item) => {
+        // debugger;
+        var ref = flarebase.store.db.collection('logs').doc(item.id);
+        try{
+          if (item.data.type === 'normal') {
+            ref.update({
+              weight: item.data.weight,
+              rep: item.data.rep,
+              set: item.data.set,
+              updated_at: moment().format('x'),
+            })
+            .then(() => {
+              spat.modal.alert('更新しました');
+            });
+          } else {
+            ref.update({
+              trainings: item.data.trainings,
+              updated_at: moment().format('x'),
+            })
+            .then(() => {
+              spat.modal.alert('更新しました');
+            });
+          }
+        }
+        catch(error) {
+          window.alert('更新に失敗しました');
+          return;
+        }        
+      },
+      delete: async(item) => {
+        await flarebase.store.db.collection('logs').doc(item.id).delete().then(spat.modal.alert('削除しました'));
+      }, 
     },
   }
 
