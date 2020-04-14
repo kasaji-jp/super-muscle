@@ -235,9 +235,8 @@ page-calendar
           //- debugger;
           await app.store.logs.delete(selected[0]);
           this.logsUpdate(this.logsToShow.day);
-          this.close();
+          modal.close();
         });
       });
-
       this.update();
-    }
+    };

@@ -1,9 +1,9 @@
 page-training-single
   div.f.flex-column
-    module-header(title="{item.label}", back='{true}')
+    module-header(title="{item.data.name}", back='{true}')
     div.px20.pt20.s-full.f.flex-column
-      img.mxa.w200.mb10(src='{item.image}')
-      div.fs12.lh14.mb20 {item.discription}
+      img.mxa.w200.mb10(src='{item.data.image.url}')
+      div.fs12.lh14.mb20 {item.data.description}
       div.bold.fs20 LOG
       div.mxn20(data-is='module-chart', item='{logsToShow}', show='{item.logs}')
       form.w-full.f.fh(onsubmit='{setType}')
@@ -23,15 +23,21 @@ page-training-single
             p.mr14.fs12 月
         button.button.primary(type='submit') 表示
       div.border.bw6.rounded-10.p12.mb20.h200.overflow-y-scroll
-        div.f.fs18.border-bottom(if='{log}', each='{log in logsToShow}')
-          //- 年間表示の時だけ切替
-          p(class='{log.type ? "mr18" : "mr6"}') {log.day}
-          p.mr6 {"avg." : log.type}{log.weight}kg
-          p(if='{!log.type}') {log.rep}回×{log.set}セット
+        div.border-bottom(if='{log}', each='{log in logsToShow}')
+          div.fs18.f.w-full(if='{log.data.type === "normal"}')
+            //- 年間表示の時だけ切替
+            p.mr18 {log.data.showYear ? log.data.day : moment(+log.data.done_at).format('MM/DD')}
+            p.mr6 {"avg." : log.data.showYear}{log.data.weight}kg
+            p(if='{!log.data.showYear}') {log.data.rep}回×{log.data.set}セット
+          div.f.ft.w-full(if='{log.data.type === "customize"}')
+            div.fs18.mr16 {moment(+log.data.done_at).format('MM/DD')}
+            div.w-full.fs14
+              div.mb2(each='{training in log.data.trainings}') {training.weight}kg × {training.rep}回
         div.s-full.f.fh(if='{!item.logs}')
           span まだありません。
 
   script.
+    //- todo-カスタムメニュー表示対応
     this.types = [
       {label: '1週間', id: 'week'},
       {label: '月間', id: 'month'},
@@ -39,17 +45,13 @@ page-training-single
     ];
 
     //- 仮の処理データ連携後実装
-    this.on('show', (e) => {
+    this.on('show', async(e) => {
       this.selectType();
-      this.dummies.forEach(dummy => {
-        var item = dummy.contents.find(content => content.id === e.opts.id);
-        if(item) { 
-          this.item = item;
-        }
-      });
+      this.item = await app.store.trainings.get(e.opts.id);
+      this.item.logs = await app.store.logs.getByTrainingId(this.item.id);
       if (this.item.logs) {
         //- 仮の処理momentobjに変換
-        this.dates = this.item.logs.map(item => moment(`${item.day}`));
+        this.dates = this.item.logs.map(item => moment(+item.data.done_at));
         this.logsToShow = this.getLogs(this.refs.type.value);
         //- 直近1週間のログがなければ直近のログがある月間を表示
         if (!this.logsToShow.length) {
@@ -62,475 +64,8 @@ page-training-single
           this.logsToShow = this.getLogs(this.refs.type.value);
         }
       }
+      this.update();
     });
-
-    this.dummies = [
-      {
-        label: '腕',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '0',
-            label: 'コンセントレーションカール',
-            image: '/static/images/sample.png',
-            discription: 'トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。トレーニングの説明。',
-            logs: [
-              {
-                day: '2018/1/4',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2019/4/4',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2019/12/4',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/4',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/5',
-                weight: '40',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/6',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/7',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/8',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/9',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/10',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/11',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/12',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/13',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/14',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/15',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/16',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/17',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/1/18',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/4',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/5',
-                weight: '40',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/6',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/7',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/8',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/9',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/10',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/11',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/12',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/13',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/14',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/15',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/16',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/17',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/2/18',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/5',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/6',
-                weight: '80',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/7',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/8',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/9',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/10',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/11',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/12',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/13',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/14',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/15',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/16',
-                weight: '40',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/17',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-              {
-                day: '2020/3/18',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-            ],
-          },
-          {
-            id: '1',
-            label: 'インクラインカール',
-            image: '/static/images/sample.png',
-            logs: [
-              {
-                day: '2020/2/12',
-                weight: '35',
-                rep: '10',
-                set: '4',
-              },
-            ],
-          },
-          {
-            id: '2',
-            label: 'ダンベルカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '3',
-            label: 'アームカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '4',
-            label: 'ダンベルフレンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '5',
-            label: 'トライセップスキックバック',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      {
-        label: '胸筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '7',
-            label: 'インクラインダンベルプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '9',
-            label: 'ダンベルプルオーバー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '11',
-            label: 'フライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      {
-        label: '腹筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '12',
-            label: 'ウェイテッドクランチ',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '13',
-            label: 'サイドべント',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '14',
-            label: 'シットアップ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '15',
-            label: 'アブローラー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '16',
-            label: 'アブクランチ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    ];
-
-    this.mylist = [
-      {
-        label: 'ビッグ3',
-        list_id: '0',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '17',
-            label: 'スクワット',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '18',
-            label: 'デッドリフト',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      {
-        label: 'my胸筋セット',
-        list_id: '1',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    ];
 
     this.selectType = () => {
       if (this.refs.type.value === 'month') {
@@ -569,7 +104,7 @@ page-training-single
       var logs = [];
       if (type === 'year') {
         var timings = [];
-        var logsTemp = this.item.logs.filter(log => moment().diff(moment(`${log.day}`), 'year') < 1);
+        var logsTemp = this.item.logs.filter(log => moment().diff(moment(+log.data.done_at), 'year') < 1);
         var thisYear = moment().get('year');
         //- 今年、去年と年が一致するobjを返す
         [thisYear - 1, thisYear].forEach(year => {
@@ -584,12 +119,13 @@ page-training-single
         
         //- 対象月毎に平均重量、平均rep数を算出
         timings.forEach(timing => {
-          var logsSingleMonth =  logsTemp.filter(log => moment(`${log.day}`).get('month') === +timing.month - 1);
+          var logsSingleMonth =  logsTemp.filter(log => moment(+log.data.done_at).get('month') === +timing.month - 1);
           var totalWeight = 0;
           var totalReps = 0;
+          //- 相談要...重量が変動した時に何kgを表示するか
           logsSingleMonth.forEach(log => {
-            totalWeight += +log.weight;
-            totalReps += +log.rep;
+            totalWeight += +log.data.weight;
+            totalReps += +log.data.rep;
           });
           var aveWeight = Math.round(totalWeight / logsSingleMonth.length);
           var aveReps = Math.round(totalReps / logsSingleMonth.length);
@@ -597,18 +133,24 @@ page-training-single
             day: `${timing.year}/${timing.month}`,
             weight: aveWeight,
             rep: aveReps,
-            type: 'year',
+            showYear: true,
           });
+        });
+        //- yearの表示も他のパターン同様、dataobjに紐付ける
+        logs = logs.map(log => {
+          var item = {};
+          item.data = log;
+          return item;
         });
       }
       else {
         if (type === 'week') {
-          logs = this.item.logs.filter(log => moment().diff(moment(`${log.day}`), 'days') < 7);
+          logs = this.item.logs.filter(log => moment().diff(moment(+log.data.done_at), 'days') < 7);
         }
         else if (type === 'month') {
           logs = this.item.logs
-            .filter(log => moment(`${log.day}`).get('year') === this.selectedYear)
-            .filter(log => moment(`${log.day}`).get('month') === this.selectedMonth - 1);
+            .filter(log => moment(+log.data.done_at).get('year') === this.selectedYear)
+            .filter(log => moment(+log.data.done_at).get('month') === this.selectedMonth - 1);
         }
       }
       return logs;
