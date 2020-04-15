@@ -24,7 +24,7 @@ page-training-single
         button.button.primary(type='submit') 表示
       div.border.bw6.rounded-10.p12.mb20.h200.overflow-y-scroll
         div.border-bottom(if='{log}', each='{log in logsToShow}')
-          div.fs18.f.w-full(if='{log.data.type === "normal"}')
+          div.fs18.f.w-full(if='{log.data.type === "normal" || log.data.showYear}')
             //- 年間表示の時だけ切替
             p.mr18 {log.data.showYear ? log.data.day : moment(+log.data.done_at).format('MM/DD')}
             p.mr6 {"avg." : log.data.showYear}{log.data.weight}kg
@@ -122,10 +122,21 @@ page-training-single
           var logsSingleMonth =  logsTemp.filter(log => moment(+log.data.done_at).get('month') === +timing.month - 1);
           var totalWeight = 0;
           var totalReps = 0;
-          //- 相談要...重量が変動した時に何kgを表示するか
           logsSingleMonth.forEach(log => {
-            totalWeight += +log.data.weight;
-            totalReps += +log.data.rep;
+            if (log.data.type === "customize") {
+              //- 平均重量=総重量/総rep数 平均rep=総rep/セット数
+              var weightSum = 0;
+              var repSum = 0;
+              log.data.trainings.forEach(training => {
+                weightSum += +training.weight * +training.rep;
+                repSum += +training.rep;
+              });
+              totalWeight += Math.round(weightSum / repSum);
+              totalReps += Math.round(repSum / log.data.trainings.length);
+            } else {
+              totalWeight += +log.data.weight;
+              totalReps += +log.data.rep;
+            }
           });
           var aveWeight = Math.round(totalWeight / logsSingleMonth.length);
           var aveReps = Math.round(totalReps / logsSingleMonth.length);
