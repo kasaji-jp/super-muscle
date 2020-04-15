@@ -102,7 +102,7 @@
     },
 
     getTrainingByParts: async() => {
-      //- リストに渡す用部位ごとのトレーニングリストを作成
+      //- リストに渡す用 部位ごとのトレーニングリストを作成
       var trainingsAll = await app.store.trainings.getAll();
       var parts = app.utils.getBodyParts();
       var keys = Object.keys(parts);
@@ -123,6 +123,16 @@
         });
       });
       return lists;
+    },
+
+    getListSingle: async(id) => {
+      //- リストデータ取得+trainingdata紐付け
+      var list = await app.store.lists.getById(id);
+      var promises = list.data.trainings.map(training => {
+        return app.store.trainings.get(training.id);
+      });
+      list.data.trainings = await Promise.all(promises);
+      return list;
     },
   };
 

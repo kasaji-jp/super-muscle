@@ -3,229 +3,67 @@ page-list-single
     module-header(title="MY MENU", back='{true}')
     div.px20.w-full.pt20
       div.f.fm.flex-between.w-full.mb20
-        div.fs28.font-impact {item.label}
+        div.fs28.font-impact {item.data.name}
         i.material-icons.fs20.text-main(onclick='{showMenu}') edit
       div.p20.border.rounded-10.bw8.mb20
-        div.f.fb.w-full(each='{content in item.contents}', onclick='{toPageSingle}')
-          img.s80.mr10(src='{content.image}')
+        div.f.fb.w-full(each='{training in item.data.trainings}', onclick='{toPageSingle}')
+          img.s80.mr10(src='{training.data.image.url}')
           div.w-full.border-bottom.f.fb.flex-between.pb8
             div.w-full
-              div.fs14.mb8 {content.label}
-              div.f.text-deepgray.fs8.px2(if='{content.history}')
-                p.mr6 {content.history.day}
-                p.mr6 {content.history.weight}
-                p {content.history.rep}回×{content.history.set}セット
-              p.text-deepgray.fs8.px2(if='{!content.history}') なし
+              div.fs14.mb8 {training.data.name}
+              div.f.text-deepgray.fs8.px2(if='{training.data.log && training.data.log.data.type === "normal"}')
+                p.mr6 {moment(+training.data.log.data.done_at).format('MM/DD')}
+                p.mr6 {training.data.log.data.weight}kg
+                p {training.data.log.data.rep}回×{training.data.log.data.set}セット
+              div.f.text-deepgray.px2.fs12(if='{training.data.log && training.data.log.data.type === "customize"}')
+                p.mr10 {moment(+training.data.log.data.done_at).format('MM/DD')}
+                div.w-full
+                  p.mr6.mb4(each='{menu in training.data.log.data.trainings}') {menu.weight}kg×{menu.rep}回
+              p.text-deepgray.fs8.px2(if='{!training.data.log}') なし
             i.material-icons.text-main.fs24(onclick='{deleteItem}') delete
       div.fs28.font-impact.mb20 DESCRIPTIONS
-      div.p20.border.rounded-10.bw8.mb20.lh14
-        div 友達に説明してみよう。動画のリンクを貼ってみてもいいかも。
-      div.fs28.font-impact.mb20 REACTIONS
-      div.p20.border.rounded-10.bw8.mb20
-        div リアクションはまだありません
+      div.p20.border.rounded-10.bw8.mb20.lh14 {item.data.description}
 
 
   script.
-    this.dummies = {
-      arms: {
-        label: '腕',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '0',
-            label: 'コンセントレーションカール',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '1',
-            label: 'インクラインカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '2',
-            label: 'ダンベルカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '3',
-            label: 'アームカール',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '4',
-            label: 'ダンベルフレンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '5',
-            label: 'トライセップスキックバック',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      chest: {
-        label: '胸筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '7',
-            label: 'インクラインダンベルプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '9',
-            label: 'ダンベルプルオーバー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '11',
-            label: 'フライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      abdominals: {
-        label: '腹筋',
-        image: '/static/images/sample.png',
-        contents: [
-          {
-            id: '12',
-            label: 'ウェイテッドクランチ',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '13',
-            label: 'サイドべント',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '14',
-            label: 'シットアップ',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '15',
-            label: 'アブローラー',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '16',
-            label: 'アブクランチ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    };
-
-    this.mylist = [
-      {
-        label: 'ビッグ3',
-        list_id: '0',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '17',
-            label: 'スクワット',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '18',
-            label: 'デッドリフト',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-      {
-        label: 'my胸筋セット',
-        list_id: '1',
-        contents: [
-          {
-            id: '6',
-            label: 'ベンチプレス',
-            image: '/static/images/sample.png',
-            history: {
-              day: '2020/3/4',
-              weight: '35kg',
-              rep: '10',
-              set: '4',
-            },
-          },
-          {
-            id: '10',
-            label: 'インクラインベンチプレス',
-            image: '/static/images/sample.png',
-          },
-          {
-            id: '8',
-            label: 'ダンベルフライ',
-            image: '/static/images/sample.png',
-          },
-        ],
-      },
-    ];
-
-    this.on('show', (e) => {
-      this.item = this.mylist.find(item => item.list_id === e.opts.id);
+    this.on('show', async(e) => {
+      //- training個別の情報つきのリストを取得
+      this.id = e.opts.id;
+      this.item = await this.setUpItem(this.id);
       this.update();
     });
 
+    this.setUpItem = async(id) => {
+      var item = await app.utils.getListSingle(id);
+      //- 紐づけlog情報の準備
+      var promises = item.data.trainings.map(training => {
+        return app.store.logs.getByTrainingId(training.id);
+      })
+      var logs = await Promise.all(promises);
+      logs.forEach( (log, i) => {
+        //- 最新のログだけ抜き出し
+        item.data.trainings[i].data.log = log[log.length - 1];
+      });
+      return item;
+    };
 
     this.showMenu = () => {
       var modal = spat.modal.open('modal-actionsheet');
       modal.on('edit', () => {
         modal.close();
         var modal_menu = spat.modal.open('modal-menu-select', {contents: this.item.contents});
-        modal_menu.on('add', (item) => {
-          if (item.length > 1) {
-            item.forEach(item => {
-              this.item.contents.push(item);
+        modal_menu.on('add', async(items) => {
+          if (items.length > 1) {
+            items.forEach(item => {
+              this.item.data.trainings.push(item);
             });
           } else {
-            this.item.contents.push(item[0]);
+            this.item.data.trainings.push(items[0]);
           }
+          //- db用にプロパティ調整
+          this.trainingSetUp();
+          await app.store.lists.update(this.item);
+          this.item = await this.setUpItem(this.id);
           spat.modal.alert('追加しました');
           modal_menu.close();
           this.update();
@@ -233,29 +71,31 @@ page-list-single
       });
       modal.on('delete', () => {
         modal.close();
-        spat.modal.confirm('このメニューを削除しますか？').on('confirm', async () => {
-          //- これから実装
-          //- await app.ref.child(`/spots/${opts.item.data.spot_id}/reports/${opts.item.id}`).del();
-          spat.modal.alert('メニューを削除しました');
-          //- opts.item._del = true;
-          //- riot.update();
+        spat.modal.confirm('このリストを削除しますか？').on('confirm', async () => {
+          await app.store.lists.delete(this.item);
+          app.routeful.go('/menu');
         });
+      });
+    };
+    
+    this.trainingSetUp = () => {
+      this.item.data.trainings = this.item.data.trainings.map(training => {
+        return {id: training.id, name: training.data.name}
       });
     };
 
     this.deleteItem = (e) => {
       e.stopPropagation();
+      var id = e.item.training.id
       spat.modal.confirm('このトレーニングを削除しますか？').on('confirm', async() => {
-        this.item.contents = this.item.contents.filter(content => content.id !== e.item.content.id);
-        //- これから実装
-        //- await app.ref.child(`/spots/${opts.item.data.spot_id}/reports/${opts.item.id}`).del();
-        spat.modal.alert('トレーニングを削除しました');
-        //- opts.item._del = true;
-        //- riot.update();
+        this.item.data.trainings = this.item.data.trainings.filter(training => training.id !== id);
+        this.trainingSetUp();
+        await app.store.lists.update(this.item);
+        this.item = await this.setUpItem(this.id);
         this.update()
       });
     };
 
     this.toPageSingle = (e) => {
-      app.routeful.go(`/training/${e.item.content.id}`);
+      app.routeful.go(`/training/${e.item.training.id}`);
     };

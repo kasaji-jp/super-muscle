@@ -117,6 +117,9 @@
       },
     },
     lists: {
+      getById: async(id) => {
+        return await flarebase.store.db.collection('lists').doc(id).getWithRelation();
+      },
       // todo-友達のリストが変更になった時どうするか 
       getDefault: async() => {
         var lists = await flarebase.store.db.collection('lists').where('is_official', '==', true).orderBy('created_at', 'desc').getWithRelation();
@@ -164,6 +167,9 @@
           return;
         }        
       },
+      delete: async(item) => {
+        await flarebase.store.db.collection('lists').doc(item.id).delete().then(spat.modal.alert('削除しました'));
+      }, 
     },
     logs: {
       post: async(item) => {
