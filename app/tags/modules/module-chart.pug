@@ -18,7 +18,7 @@ module-chart
         else {
           //- 重量変動の場合は最大値をチャートに表示
           var weights = item.data.trainings.map(item => item.weight);
-          //- あとでrmの変更のために、indexを保存
+          //- あとでrm計算するために、indexを保存
           weightForCalc = Math.max.apply(null, weights);
           indexForCalc = weights.indexOf(String(weightForCalc));
           return weightForCalc;
@@ -30,7 +30,7 @@ module-chart
       var min = Math.floor(Math.min.apply(null, this.weight) / 10) * 10 - 10;
       //- rmの計算方法：（最大重量）＝（使用重量）×｛1＋（reps÷40）｝
       this.rms = this.opts.item.map(item => {
-        if (item.data.type === "normal") return Math.round(item.data.weight * (1 + (item.data.rep / 40)));
+        if (item.data.type === "normal" || item.data.showYear) return Math.round(item.data.weight * (1 + (item.data.rep / 40)));
         else return Math.round(weightForCalc * (1 + (item.data.trainings[indexForCalc].rep / 40)));
       });
       var max = Math.floor(Math.max.apply(null, this.rms) / 10) * 10 + 10;
