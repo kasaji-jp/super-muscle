@@ -57,6 +57,17 @@ modal-menu-select(spat-animation='bottom')
       var indicator = spat.modal.indicator();
       this.trainings = await app.utils.getTrainingByParts();
       this.lists = await app.utils.getLists();
+
+
+      //- 上でとってきたデータにlog情報紐付け
+      var promises = Object.values(this.trainings).map(part => {
+        return app.utils.putLog(part.contents);
+      });
+      promisesList = this.lists.map(list => {
+        return app.utils.putLog(list.data.trainings);
+      });
+      promises.push(promisesList);
+      await Promise.all(promises);
       indicator.close();
       this.update();
     });

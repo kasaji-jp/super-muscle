@@ -9,10 +9,16 @@ item-training
         span.fs8 {timerOpened ? 'off' : 'on'}
     form(onsubmit='{done}')
       div.w-full
-        div.w-full.f.fh.fs14.py8
-          div.mr4 重量/回数:
-          select.py4.px8.bg-softgray.rounded-4(ref='types', onchange='{update}')
-            option(each='{type in types}', value='{type.value}', selected='{type.value === selectedType}') {type.name}
+        div.w-full.f.fs14.py8
+          div.f.fh.col6
+            div.mr4 重量/回数:
+            select.py4.px8.bg-softgray.rounded-4(ref='types', onchange='{update}')
+              option(each='{type in types}', value='{type.value}', selected='{type.value === selectedType}') {type.name}
+          div.col6.f.fh
+            div.mr4 前回比
+            select.py4.px8.bg-softgray.rounded-4(ref='fromPrev', onchange='{autoInput}')
+              option(value='normal', selected) ----
+              option(each='{option in autoInputMenu}', value='{option.value}') {option.label}
         div.f.flex-between.mb20
           div.w-full(if='{refs.types.value === "normal"}')
             div.f.fb.mb6
@@ -72,6 +78,14 @@ item-training
       this.item = this.setData();
       this.update();
     });
+
+    this.autoInputMenu = [
+      {label: '+10kg', value: 10},
+      {label: '+5kg', value: 5},
+      {label: '±0kg', value: 0},
+      {label: '-5kg', value: -5},
+      {label: '-10kg', value: -10},
+    ];
 
     this.addSet = () => {
       this.sets++;
@@ -148,6 +162,27 @@ item-training
         this.refs.timerBox.style.maxHeight = `${atomHeight}px`;
       } else {
         this.refs.timerBox.style.maxHeight = 0;
+      }
+      this.update();
+    };
+
+    this.autoInput = (e) => {
+      var logData = e.item.item.data.log.data
+      this.selectedType = logData.type;
+      this.update();
+      if (this.selectedType === 'normal') {
+        this.refs.weight.value = +logData.weight + +this.refs.fromPrev.value;
+        this.refs.rep.value = logData.rep;
+        this.refs.set.value = logData.set;
+      } else {
+        this.set = logData.trainings.length;
+        this.update();
+        this.refs.weight.forEach((weight, i) => {
+          weight.value = +logData.trainings[i].weight + +this.refs.fromPrev.value;
+        })
+        this.refs.rep.forEach((rep, i) => {
+          rep.value = logData.trainings[i].rep;
+        })
       }
       this.update();
     };

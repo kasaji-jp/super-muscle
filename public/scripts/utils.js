@@ -134,6 +134,19 @@
       list.data.trainings = await Promise.all(promises);
       return list;
     },
+    putLog: async(items) => {
+      //- 紐づけlog情報の準備
+      var promises = items.map(item => {
+        return app.store.logs.getByTrainingId(item.id);
+      });
+      var logs = await Promise.all(promises);
+      logs.forEach( (log, i) => {
+        //- 最新のログだけ抜き出し
+        items[i].data.log = log[log.length - 1];
+      });
+      return items;
+    },
   };
+  
 
 })();
