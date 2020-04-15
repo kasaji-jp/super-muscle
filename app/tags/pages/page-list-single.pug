@@ -35,10 +35,11 @@ page-list-single
 
     this.setUpItem = async(id) => {
       var item = await app.utils.getListSingle(id);
+      
       //- 紐づけlog情報の準備
       var promises = item.data.trainings.map(training => {
         return app.store.logs.getByTrainingId(training.id);
-      })
+      });
       var logs = await Promise.all(promises);
       logs.forEach( (log, i) => {
         //- 最新のログだけ抜き出し

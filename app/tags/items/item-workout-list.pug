@@ -17,11 +17,15 @@ item-workout-list
             img.block.s30.mr20(src='{content.data.image.url}')
             div.s-full
               div {content.data.name}
-              div.f.text-deepgray.fs8.px2(if='{content.data.history}')
-                p.mr6 {content.data.history.day}
-                p.mr6 {content.data.history.weight}
-                p {content.data.history.rep}回×{content.data.history.set}セット
-              div.w-full.fs8.text-deepgray.py4(if='{!content.data.history}') データなし
+              div.f.text-deepgray.fs8.px2(if='{content.data.log && content.data.log.data.type === "normal"}')
+                p.mr6 {moment(+content.data.log.data.done_at).format('MM/DD')}
+                p.mr6 {content.data.log.data.weight}
+                p {content.data.log.data.rep}回×{content.data.log.data.set}セット
+              div.f.text-deepgray.fs8.px2(if='{content.data.log && content.data.log.data.type === "customize"}')
+                p.mr6 {moment(+content.data.log.data.done_at).format('MM/DD')}
+                div.w-full
+                  p(each='{training in content.data.log.data.trainings}') {training.weight}kg × {training.rep}回
+              div.w-full.fs8.text-deepgray.py4(if='{!content.data.log}') データなし
           div.s20.f.fh(class='bg-{content.selected ? "sub" : "deepgray"}', if='{opts.select}')
             i.icon-check_stroke.text-white
           div.absolute.trbl0.f.fh.bg-clearblack(if='{content.disabled}')
@@ -31,7 +35,7 @@ item-workout-list
             span.text-white.bold.py20 リスト詳細へ
 
   script.
-    this.on('mount', () => {
+    this.on('mount', async() => {
       this.open = false;
       this.isSelectedList = false;
       this.isSelectedItem = false;
@@ -55,6 +59,17 @@ item-workout-list
           }
         }
       }
+
+      //- 紐づけlog情報の準備
+      var promises = items.map(item => {
+        return app.store.logs.getByTrainingId(item.id);
+      });
+      var logs = await Promise.all(promises);
+      logs.forEach( (log, i) => {
+        //- 最新のログだけ抜き出し
+        items[i].data.log = log[log.length - 1];
+      });
+      this.update();
     });
 
     this.on('update', ()=> {
