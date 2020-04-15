@@ -26,7 +26,7 @@ item-workout-list
             i.icon-check_stroke.text-white
           div.absolute.trbl0.f.fh.bg-clearblack(if='{content.disabled}')
             span.text-white.fs18.bold 登録済み
-        div.w-full.py10(if='{!opts.select && opts.type}', onclick='{edit}')
+        div.w-full.py10(if='{!opts.select && opts.type}', onclick='{toListSingle}')
           div.mxa.w200.f.fh.bg-sub.rounded-full
             span.text-white.bold.py20 リスト詳細へ
 
@@ -131,6 +131,6 @@ item-workout-list
       app.routeful.go(`/training/${e.item.content.id}`);
     };
 
-    this.edit = (e) => {
-      app.routeful.go(`/list/${e.item.item.list_id}`);
+    this.toListSingle = (e) => {
+      app.routeful.go(`/list/${e.item.item.id}`);
     };
