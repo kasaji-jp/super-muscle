@@ -185,7 +185,7 @@
       getMine: async(item) => {
         try {
           // kari
-          var lists = await flarebase.store.db.collection('logs').getWithRelation();
+          var lists = await flarebase.store.db.collection('logs').orderBy('done_at', 'desc').getWithRelation();
           return lists;
         }
         catch (error) {
@@ -198,7 +198,6 @@
         return lists;
       },
       update: async(item) => {
-        // debugger;
         var ref = flarebase.store.db.collection('logs').doc(item.id);
         try{
           if (item.data.type === 'normal') {

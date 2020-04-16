@@ -11,14 +11,7 @@ page-list-single
           div.w-full.border-bottom.f.fb.flex-between.pb8
             div.w-full
               div.fs14.mb8 {training.data.name}
-              div.f.text-deepgray.fs8.px2(if='{training.data.log && training.data.log.data.type === "normal"}')
-                p.mr6 {moment(+training.data.log.data.done_at).format('MM/DD')}
-                p.mr6 {training.data.log.data.weight}kg
-                p {training.data.log.data.rep}回×{training.data.log.data.set}セット
-              div.f.text-deepgray.px2.fs12(if='{training.data.log && training.data.log.data.type === "customize"}')
-                p.mr10 {moment(+training.data.log.data.done_at).format('MM/DD')}
-                div.w-full
-                  p.mr6.mb4(each='{menu in training.data.log.data.trainings}') {menu.weight}kg×{menu.rep}回
+              div.text-deepgray.fs8.px2(data-is='atom-logs-display', item='{training.data.log}')
               p.text-deepgray.fs8.px2(if='{!training.data.log}') なし
             i.material-icons.text-main.fs24(onclick='{deleteItem}') delete
       div.fs28.font-impact.mb20 DESCRIPTIONS

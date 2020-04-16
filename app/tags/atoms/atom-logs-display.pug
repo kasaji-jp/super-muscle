@@ -1,0 +1,16 @@
+atom-logs-display
+  div.f.ft.w-full
+    div.mr10(if='{location.pathname !== "/calendar"}') {getDateText()}
+    div.f.w-full(if='{opts.item.data.type === "normal" || opts.item.data.showYear}') 
+      div(if='{opts.item.data.showYear}') avg.
+      div {opts.item.data.weight}kg
+      div.w-full(if='{opts.item.data.type === "normal"}') × {opts.item.data.rep}回 × {opts.item.data.set}セット
+    div.w-full(if='{opts.item.data.type === "customize"}')
+      div.w-full(each='{training, i in opts.item.data.trainings}') {i + 1}セット目: {training.weight}kg × {training.rep}回
+
+  script.
+    this.getDateText = () => {
+      console.warn(this.opts.item);
+      if (this.opts.item.data.showYear) return this.opts.item.data.day;
+      else return moment(+this.opts.item.data.done_at).format('MM/DD');
+    };
