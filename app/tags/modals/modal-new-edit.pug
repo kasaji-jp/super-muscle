@@ -9,7 +9,7 @@ modal-new-edit(spat-animation='bottom')
         div.fs28.bold.mb20 BODY PARTS:
         select.w-full.bg-softgray.py10.px20.fs16.rounded-4.mb40(ref='parts', required)
           option(value='normal', hidden, selected) 部位を選択してください
-          option(each='{part in dummies}') {part}
+          option(each='{part in getBodyParts()}', value='{part.id}') {part.label}
         div.mb20.fs28.bold THUMBNAILS
         img.s64.block.object-fit-cover(src='{base64}', if='{base64}')
         input.mb40(type='file', accept='image/*', onchange='{changeImage}')
@@ -36,12 +36,11 @@ modal-new-edit(spat-animation='bottom')
 
 
   script.
-    this.dummies = [
-      '腕',
-      '肩',
-      '腹筋',
-      '脚',
-    ];
+    this.getBodyParts = () => {
+      var parts = app.utils.getBodyParts();
+      parts = Object.values(parts);
+      return parts;
+    };
 
     this.openSelectModal = () => {
       if (this.refs.title.value === '') {
@@ -82,9 +81,13 @@ modal-new-edit(spat-animation='bottom')
           name: this.refs.title.value,
           description: this.refs.description.value,
           parts: this.refs.parts.value,
-        }
-        
-        var url = await app.utils.uploadTrainingImageToStorage(item, 'trainings');
+          image: this.image,
+        };
+        var indicator = spat.modal.indicator();
+        this.close();
+        var id = await app.store.trainings.post(this.item);
+        app.routeful.go(`/training/${id}`);
+        indicator.close();
       }
     };
 

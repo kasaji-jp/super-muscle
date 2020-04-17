@@ -29,8 +29,8 @@
     },
     uploadTrainingImageToStorage: (item, type) => {
       return new Promise(async (resolve, reject) => {
-        let imageRef = firebase.storage().ref(type).child(item.item.id).child('images').child(moment().format('X'));
-        imageRef.put(item.item.data.image.file).then(async (ss) => {
+        let imageRef = firebase.storage().ref(type).child(item.id).child('images').child(moment().format('X'));
+        imageRef.put(item.data.image.file).then(async (ss) => {
           var url = await ss.ref.getDownloadURL();
           resolve({
             url: url,
@@ -86,12 +86,12 @@
 
     getBodyParts: () => {
       return {
-        chest: {label: '胸筋', image: '/static/images/sample.png'}, 
-        legs: {label: '脚', image: '/static/images/sample.png'}, 
-        arms: {label: '腕', image: '/static/images/sample.png'}, 
-        abdominal: {label: '腹筋', image: '/static/images/sample.png'}, 
-        shoulders: {label: '肩', image: '/static/images/sample.png'}, 
-        back: {label: '背筋', image: '/static/images/sample.png'}
+        chest: {label: '胸筋', image: '/static/images/sample.png', id:'chest'}, 
+        legs: {label: '脚', image: '/static/images/sample.png', id:'legs'}, 
+        arms: {label: '腕', image: '/static/images/sample.png', id:'arms'}, 
+        abdominal: {label: '腹筋', image: '/static/images/sample.png', id:'abdominal'}, 
+        shoulders: {label: '肩', image: '/static/images/sample.png', id:'shoulders'}, 
+        back: {label: '背筋', image: '/static/images/sample.png', id:'back'}
       };
     },
     

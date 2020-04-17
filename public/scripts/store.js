@@ -69,9 +69,10 @@
         // return trainings;
       },
       post: async(item) => {
+        debugger;
         var ref = flarebase.store.db.collection('trainings');
         try{
-          ref.add({
+          return await ref.add({
             description: item.data.description,
             name: item.data.name,
             parts: item.data.parts,
@@ -79,11 +80,17 @@
             is_official: item.data.is_official || true,
             created_at: moment().format('x'),
             updated_at: moment().format('x'),
-            image: {
-              url: item.data.image.url ,
-            },
+            image: '',
           })
-          .then(() => {
+          .then( async(docRef) => {
+            item.id = docRef.id;
+            if (!item.data.image.url) {
+              var url = await app.utils.uploadTrainingImageToStorage(item, 'trainings');
+              await ref.doc(item.id).update(
+                {image: {url: url.url} }
+              );
+            }
+            return item.id;
             spat.modal.alert('更新しました');
           });
         }
