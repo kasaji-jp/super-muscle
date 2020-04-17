@@ -10,7 +10,6 @@ atom-logs-display
 
   script.
     this.getDateText = () => {
-      console.warn(this.opts.item);
       if (this.opts.item.data.showYear) return this.opts.item.data.day;
       else return moment(+this.opts.item.data.done_at).format('MM/DD');
     };

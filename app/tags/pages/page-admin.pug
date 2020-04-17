@@ -14,7 +14,7 @@ page-admin
           div.w-full.p10(if='{type === "trainings"}')
             div.w-full.f.fm.mb4
               div.f.flex-column.fc.mr20
-                img.s80.mb10.mxa.object-fit-contain.border(src='{item.data.image.url}')
+                img.s80.mb10.mxa.object-fit-contain.border(src='{item.data.image.url || item.data.image.base64}')
                 label
                   input.hide(type='file', onchange='{changeImage}', accept='image/*')
                   div.w100.bg-deepgray.rounded-10.py10.f.fh
@@ -53,7 +53,6 @@ page-admin
               select.px10.py6.border.mr10(ref='trainingToAdd')
                 option(value='normal' selected) --選択--
                 option(each='{training in trainingsAll}', value='{training.id}') {training.name}
-              //- draggable jissou
               div.p4.rounded-10.bold.bg-sub.f.fh.text-white.cursor-pointer.mr10(onclick='{addToList}')
                 span 追加
               div.p4.rounded-10.bold.bg-main.f.fh.text-white.cursor-pointer(onclick='{deleteFromList}')
@@ -140,10 +139,10 @@ page-admin
       if (!e.target.value || !e.target.files[0]) return;
       var file = e.target.files[0];
       var base64 = await app.utils.fileToBase64(file);
-      //- this.file = file;
       if (!base64) return;
+      if (!e.item.item.data) e.item.item.data = {};
       e.item.item.data.image = {
-        url: base64,
+        base64: base64,
         file: file,
       };
       this.update();
@@ -182,14 +181,13 @@ page-admin
     };
 
     this.getQueryTrainings = async(item) => {
-      var url = await app.utils.uploadTrainingImageToStorage(item, 'trainings');
       return {
         description: this.refs.description[item.i].value,
         name: this.refs.name[item.i].value,
         parts: this.refs.parts[item.i].value,
         is_private: this.refs.is_private[item.i].value === 'true' ? true : false,
         is_official: this.refs.is_official[item.i].value === 'true' ? true : false,
-        image: { url : url.url },
+        image: item.item.data.image,
       };
     };
 

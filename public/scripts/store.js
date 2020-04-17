@@ -69,21 +69,28 @@
         // return trainings;
       },
       post: async(item) => {
+        debugger;
         var ref = flarebase.store.db.collection('trainings');
         try{
-          ref.add({
+          return await ref.add({
             description: item.data.description,
             name: item.data.name,
             parts: item.data.parts,
-            is_private: item.data.is_private,
-            is_official: item.data.is_official,
+            is_private: item.data.is_private || false,
+            is_official: item.data.is_official || true,
             created_at: moment().format('x'),
             updated_at: moment().format('x'),
-            image: {
-              url: item.data.image.url,
-            },
+            image: '',
           })
-          .then(() => {
+          .then( async(docRef) => {
+            item.id = docRef.id;
+            if (!item.data.image.url) {
+              var url = await app.utils.uploadTrainingImageToStorage(item, 'trainings');
+              await ref.doc(item.id).update(
+                {image: {url: url.url} }
+              );
+            }
+            return item.id;
             spat.modal.alert('更新しました');
           });
         }
@@ -128,18 +135,19 @@
       },
       post: async(item) => {
         var ref = flarebase.store.db.collection('lists');
-        try{
-          ref.add({
+        try {
+          return await ref.add({
             name: item.data.name,
             description: item.data.description,
             trainings : item.data.trainings,
-            is_private: item.data.is_private,
-            is_official: item.data.is_official,
+            is_private: item.data.is_private || false,
+            is_official: item.data.is_official || true,
             created_at: moment().format('x'),
             updated_at: moment().format('x'),
           })
-          .then(() => {
+          .then( (docRef) => {
             spat.modal.alert('更新しました');
+            return docRef.id;
           });
         }
         catch(error) {
@@ -150,7 +158,7 @@
       update: async(item) => {
         var ref = flarebase.store.db.collection('lists').doc(item.id);
         try{
-          ref.update({
+          return ref.update({
             name: item.data.name,
             description: item.data.description,
             trainings : item.data.trainings,

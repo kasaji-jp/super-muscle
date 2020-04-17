@@ -1,43 +1,104 @@
 modal-new-edit(spat-animation='bottom')
-  div.s-full.bg-maingray.f.flex-column(ref='modal')
+  form.s-full.bg-maingray.f.flex-column(ref='modal', onsubmit='{add}')
     div.w-full(data-is='module-header', title='リスト編集', close='{close}')
     div.s-full.px30.py30.overflow-y-scroll
       div.fs28.bold.mb20 TITLE:
-      input.input.w-full.mb40.bg-white(ref='title', placeholder='イカしたタイトルをつけよう')
+      input.input.w-full.mb40.bg-white(ref='title', placeholder='イカしたタイトルをつけよう', required)
+
       div.w-full(if='{opts.type === "training"}')
         div.fs28.bold.mb20 BODY PARTS:
-        select.w-full.bg-softgray.py10.px20.fs16.rounded-4.mb40(ref='parts')
+        select.w-full.bg-softgray.py10.px20.fs16.rounded-4.mb40(ref='parts', required)
           option(value='normal', hidden, selected) 部位を選択してください
-          option(each='{part in dummies}') {part}
+          option(each='{part in getBodyParts()}', value='{part.id}') {part.label}
         div.mb20.fs28.bold THUMBNAILS
-        input.mb40(type='file', accept='image/*')
+        img.s64.block.object-fit-cover(src='{base64}', if='{base64}')
+        input.mb40(type='file', accept='image/*', onchange='{changeImage}')
+
       div.fs28.bold.mb20 DESCRIPTION:
       textarea.input.w-full.mb40.bg-white.h200(ref='description', placeholder='友達も思わずマネしたくなる様な説明を書いてみよう')
-      div.w-full.py10(onclick='{opts.type === "list" ? edit : add}')
-        div.mxa.w200.f.fh.bg-sub.rounded-full.cursor-pointer
-          span.text-white.bold.py20 トレーニングを{opts.type === "list" ? '選ぶ' : '追加'}
+
+      div.w-full(if='{opts.type === "list"}')
+        div.fs28.bold.mb20 MENU:
+        div.p20.border.rounded-10.bw8.mb20(if='{trainings}')
+          div.f.fb.w-full(each='{training in trainings}')
+            img.s80.mr10(src='{training.data.image.url}')
+            div.w-full.border-bottom.f.fb.flex-between.pb8
+              div.w-full
+                div.fs14.mb8 {training.data.name}
+
+        div.w-full.py10(onclick='{openSelectModal}', if='{!trainings}')
+          div.mxa.w200.f.fh.bg-sub.rounded-full.cursor-pointer
+            span.text-white.bold.py20 トレーニングを選ぶ
+
+      button.w-full.py10(type='submit', if='{opts.type === "training" || trainings}')
+        div.mxa.w200.f.fh.bg-main.rounded-full.cursor-pointer
+          span.text-white.bold.py20 決定
+
 
   script.
-    this.dummies = [
-      '腕',
-      '肩',
-      '腹筋',
-      '脚',
-    ];
+    this.getBodyParts = () => {
+      var parts = app.utils.getBodyParts();
+      parts = Object.values(parts);
+      return parts;
+    };
 
-    this.edit = () => {
+    this.openSelectModal = () => {
       if (this.refs.title.value === '') {
         spat.modal.alert('タイトルを入力してください')
         return;
       }
-      this.trigger('goEdit');
+      var modal = spat.modal.open('modal-menu-select');
+      modal.on('add', (items) => {
+        this.trainings = items;
+        modal.close();
+        this.update();
+      });
     };
+    
 
-    this.add = () => {
-      if (this.refs.title.value === '' || this.refs.parts.value === 'normal') {
-        spat.modal.alert('タイトル、部位は入力必須です');
+    this.add = async(e) => {
+      e.preventDefault();
+      if (this.opts.type === 'list' && !this.trainings) {
+        spat.modal.alert('トレーニングを選択してください');
         return;
       }
-      console.warn('add');
-      //- todo- データベース連携後ここ実装 
+      this.item = {};
+      if (this.opts.type === 'list') {
+        this.trainings = this.trainings.map(training => {
+          return {id: training.id, name: training.data.name};
+        });
+        this.item.data = {
+          name: this.refs.title.value,
+          description: this.refs.description.value,
+          trainings: this.trainings,
+        };
+        //- 画像の表示がなくなるので先にmodalclose
+        this.close();
+        var id = await app.store.lists.post(this.item);
+        app.routeful.go(`/list/${id}`);
+      } else {
+        this.item.data = {
+          name: this.refs.title.value,
+          description: this.refs.description.value,
+          parts: this.refs.parts.value,
+          image: this.image,
+        };
+        var indicator = spat.modal.indicator();
+        this.close();
+        var id = await app.store.trainings.post(this.item);
+        app.routeful.go(`/training/${id}`);
+        indicator.close();
+      }
+    };
+
+    this.changeImage = async(e) => {
+      if (!e.target.value || !e.target.files[0]) return;
+      var file = e.target.files[0];
+      base64 = await app.utils.fileToBase64(file);
+      if (!base64) return;
+      this.image = {
+        file: file,
+      };
+      this.update();
+      e.target.value = '';
     };
