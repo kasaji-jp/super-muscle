@@ -53,7 +53,6 @@ page-admin
               select.px10.py6.border.mr10(ref='trainingToAdd')
                 option(value='normal' selected) --選択--
                 option(each='{training in trainingsAll}', value='{training.id}') {training.name}
-              //- draggable jissou
               div.p4.rounded-10.bold.bg-sub.f.fh.text-white.cursor-pointer.mr10(onclick='{addToList}')
                 span 追加
               div.p4.rounded-10.bold.bg-main.f.fh.text-white.cursor-pointer(onclick='{deleteFromList}')
@@ -142,6 +141,7 @@ page-admin
       var base64 = await app.utils.fileToBase64(file);
       //- this.file = file;
       if (!base64) return;
+      if (!e.item.item.data) e.item.item.data = {};
       e.item.item.data.image = {
         url: base64,
         file: file,
@@ -183,6 +183,7 @@ page-admin
 
     this.getQueryTrainings = async(item) => {
       var url = await app.utils.uploadTrainingImageToStorage(item, 'trainings');
+      debugger;
       return {
         description: this.refs.description[item.i].value,
         name: this.refs.name[item.i].value,

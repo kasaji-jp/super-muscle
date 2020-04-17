@@ -11,22 +11,24 @@ modal-new-edit(spat-animation='bottom')
           option(value='normal', hidden, selected) 部位を選択してください
           option(each='{part in dummies}') {part}
         div.mb20.fs28.bold THUMBNAILS
-        input.mb40(type='file', accept='image/*')
+        img.s64.block.object-fit-cover(src='{base64}', if='{base64}')
+        input.mb40(type='file', accept='image/*', onchange='{changeImage}')
 
       div.fs28.bold.mb20 DESCRIPTION:
       textarea.input.w-full.mb40.bg-white.h200(ref='description', placeholder='友達も思わずマネしたくなる様な説明を書いてみよう')
 
-      div.fs28.bold.mb20 MENU:
-      div.p20.border.rounded-10.bw8.mb20(if='{opts.type === "list" && trainings}')
-        div.f.fb.w-full(each='{training in trainings}')
-          img.s80.mr10(src='{training.data.image.url}')
-          div.w-full.border-bottom.f.fb.flex-between.pb8
-            div.w-full
-              div.fs14.mb8 {training.data.name}
+      div.w-full(if='{opts.type === "list"}')
+        div.fs28.bold.mb20 MENU:
+        div.p20.border.rounded-10.bw8.mb20(if='{trainings}')
+          div.f.fb.w-full(each='{training in trainings}')
+            img.s80.mr10(src='{training.data.image.url}')
+            div.w-full.border-bottom.f.fb.flex-between.pb8
+              div.w-full
+                div.fs14.mb8 {training.data.name}
 
-      div.w-full.py10(onclick='{openSelectModal}', if='{!trainings}')
-        div.mxa.w200.f.fh.bg-sub.rounded-full.cursor-pointer
-          span.text-white.bold.py20 トレーニングを選ぶ
+        div.w-full.py10(onclick='{openSelectModal}', if='{!trainings}')
+          div.mxa.w200.f.fh.bg-sub.rounded-full.cursor-pointer
+            span.text-white.bold.py20 トレーニングを選ぶ
 
       button.w-full.py10(type='submit', if='{opts.type === "training" || trainings}')
         div.mxa.w200.f.fh.bg-main.rounded-full.cursor-pointer
@@ -71,10 +73,29 @@ modal-new-edit(spat-animation='bottom')
           description: this.refs.description.value,
           trainings: this.trainings,
         };
-        var docRef = await app.store.lists.post(this.item);
-        app.routeful.go(`/list${docRef.id}`);
+        //- 画像の表示がなくなるので先にmodalclose
+        this.close();
+        var id = await app.store.lists.post(this.item);
+        app.routeful.go(`/list/${id}`);
       } else {
-
+        this.item.data = {
+          name: this.refs.title.value,
+          description: this.refs.description.value,
+          parts: this.refs.parts.value,
+        }
+        
+        var url = await app.utils.uploadTrainingImageToStorage(item, 'trainings');
       }
-      //- this.item.data
+    };
+
+    this.changeImage = async(e) => {
+      if (!e.target.value || !e.target.files[0]) return;
+      var file = e.target.files[0];
+      base64 = await app.utils.fileToBase64(file);
+      if (!base64) return;
+      this.image = {
+        file: file,
+      };
+      this.update();
+      e.target.value = '';
     };
