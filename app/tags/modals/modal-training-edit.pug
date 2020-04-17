@@ -22,16 +22,13 @@ modal-training-edit(spat-animation='bottom')
 
     this.post = async() => {
       if (this.opts.edit) {
-        var promises = this.datas.map(data => {
-          return app.store.logs.update(data);
-        });
+        await app.store.logs.update(this.datas[0]);
       } else {
         var promises = this.datas.map(data => {
           return app.store.logs.post(data);
         });
+        await Promise.all(promises);
       }
-      await Promise.all(promises);
       this.isFinished = true;
       this.trigger('finish', this.opts.date);
-      this.close();
     };

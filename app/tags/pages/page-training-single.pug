@@ -24,15 +24,16 @@ page-training-single
         button.button.primary(type='submit') 表示
       div.border.bw6.rounded-10.p12.mb20.h200.overflow-y-scroll
         div.border-bottom(if='{log}', each='{log in logsToShow}')
-          div.fs18.f.w-full(if='{log.data.type === "normal" || log.data.showYear}')
-            //- 年間表示の時だけ切替
-            p.mr18 {log.data.showYear ? log.data.day : moment(+log.data.done_at).format('MM/DD')}
-            p.mr6 {"avg." : log.data.showYear}{log.data.weight}kg
-            p(if='{!log.data.showYear}') {log.data.rep}回×{log.data.set}セット
-          div.f.ft.w-full(if='{log.data.type === "customize"}')
-            div.fs18.mr16 {moment(+log.data.done_at).format('MM/DD')}
-            div.w-full.fs14
-              div.mb2(each='{training in log.data.trainings}') {training.weight}kg × {training.rep}回
+          div.fs16(data-is='atom-logs-display', item='{log}', if='{log}')
+          //- div.fs18.f.w-full(if='{log.data.type === "normal" || log.data.showYear}')
+          //-   //- 年間表示の時だけ切替
+          //-   p.mr18 {log.data.showYear ? log.data.day : moment(+log.data.done_at).format('MM/DD')}
+          //-   p.mr6 {"avg." : log.data.showYear}{log.data.weight}kg
+          //-   p(if='{!log.data.showYear}') {log.data.rep}回×{log.data.set}セット
+          //- div.f.ft.w-full(if='{log.data.type === "customize"}')
+          //-   div.fs18.mr16 {moment(+log.data.done_at).format('MM/DD')}
+          //-   div.w-full.fs14
+          //-     div.mb2(each='{training in log.data.trainings}') {training.weight}kg × {training.rep}回
         div.s-full.f.fh(if='{!item.logs}')
           span まだありません。
 

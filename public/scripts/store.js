@@ -175,7 +175,7 @@
       post: async(item) => {
         var ref = flarebase.store.db.collection('logs');
         try{
-          ref.add(item.data).then(spat.modal.alert('登録しました'));
+          await ref.add(item.data).then(spat.modal.alert('登録しました'));
         }
         catch(error) {
           window.alert('更新に失敗しました');
@@ -185,7 +185,7 @@
       getMine: async(item) => {
         try {
           // kari
-          var lists = await flarebase.store.db.collection('logs').getWithRelation();
+          var lists = await flarebase.store.db.collection('logs').orderBy('done_at', 'desc').getWithRelation({cache: false});
           return lists;
         }
         catch (error) {
@@ -198,11 +198,10 @@
         return lists;
       },
       update: async(item) => {
-        // debugger;
         var ref = flarebase.store.db.collection('logs').doc(item.id);
         try{
           if (item.data.type === 'normal') {
-            ref.update({
+            await ref.update({
               weight: item.data.weight,
               rep: item.data.rep,
               set: item.data.set,

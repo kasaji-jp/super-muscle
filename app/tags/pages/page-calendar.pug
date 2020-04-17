@@ -20,13 +20,10 @@ page-calendar
       div.fs16.bold {logsToShow.day}
       div.w-full.pt4.py10.f.flex-between.border-bottom(each='{log in logsToShow.logs}', if='{logsToShow.logs}')
         div.w-full.f
-          //- 本番ではtrainingidで画像を引っ張ってくる
           img.s40.mr10(src='{log.data.image}')
           div.w-full
             div.bold.fs16.mb4 {log.data.name}
-            div.fs14(if='{log.data.type === "normal"}') {log.data.weight}kg × {log.data.rep}回 × {log.data.set}セット
-            div.fs12(if='{log.data.type === "customize"}', each='{training, i in log.data.trainings}')
-              span {i + 1}セット目: {training.weight}kg × {training.rep}回
+            div(data-is='atom-logs-display', class='{log.data.type === "normal" ? "fs14" : "fs12"}', item='{log}')
         div.f.fh.cursor-pointer(onclick='{openModal}')
           i.icon-pen.text-sub.fs18
 
@@ -209,7 +206,8 @@ page-calendar
         modal.close();
         var modal_edit = spat.modal.open('modal-training-edit', {items: selected, date: this.logsToShow.day});
         modal_edit.on('finish', async(date) => {
-          this.logsUpdate(date);
+          await this.logsUpdate(date);
+          modal_edit.close();
         });
       });
       this.update();
@@ -226,15 +224,16 @@ page-calendar
         modal.close();
         var modal_edit = spat.modal.open('modal-training-edit', {items: selected, edit: true, date: this.logsToShow.day});
         modal_edit.on('finish', async(date) => {
-          this.logsUpdate(date);
+          await this.logsUpdate(date);
+          modal_edit.close();
+          this.update();
         });
         this.update()
       });
       modal.on('delete', () => {
         spat.modal.confirm('このログを削除してもよろしいですか?').on('confirm', async() => {
-          //- debugger;
           await app.store.logs.delete(selected[0]);
-          this.logsUpdate(this.logsToShow.day);
+          await this.logsUpdate(this.logsToShow.day);
           modal.close();
         });
       });
