@@ -128,29 +128,28 @@
       },
       post: async(item) => {
         var ref = flarebase.store.db.collection('lists');
-        try{
-          ref.add({
-            name: item.data.name,
-            description: item.data.description,
-            trainings : item.data.trainings,
-            is_private: item.data.is_private,
-            is_official: item.data.is_official,
-            created_at: moment().format('x'),
-            updated_at: moment().format('x'),
-          })
-          .then(() => {
-            spat.modal.alert('更新しました');
-          });
-        }
-        catch(error) {
+        ref.add({
+          name: item.data.name,
+          description: item.data.description,
+          trainings : item.data.trainings,
+          is_private: item.data.is_private || false,
+          is_official: item.data.is_official || true,
+          created_at: moment().format('x'),
+          updated_at: moment().format('x'),
+        })
+        .then((docRef) => {
+          spat.modal.alert('更新しました');
+          return docRef;
+        })
+        .catch((error) => {
           window.alert('更新に失敗しました');
           return;
-        }
+        });
       },
       update: async(item) => {
         var ref = flarebase.store.db.collection('lists').doc(item.id);
         try{
-          ref.update({
+          return ref.update({
             name: item.data.name,
             description: item.data.description,
             trainings : item.data.trainings,
