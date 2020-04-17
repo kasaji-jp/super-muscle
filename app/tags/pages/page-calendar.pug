@@ -226,6 +226,7 @@ page-calendar
         modal_edit.on('finish', async(date) => {
           await this.logsUpdate(date);
           modal_edit.close();
+          this.update();
         });
         this.update()
       });
