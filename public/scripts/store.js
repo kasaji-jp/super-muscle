@@ -69,7 +69,6 @@
         // return trainings;
       },
       post: async(item) => {
-        debugger;
         var ref = flarebase.store.db.collection('trainings');
         try{
           return await ref.add({
@@ -90,8 +89,8 @@
                 {image: {url: url.url} }
               );
             }
+            spat.modal.alert('追加しました');
             return item.id;
-            spat.modal.alert('更新しました');
           });
         }
         catch(error) {
@@ -122,6 +121,9 @@
           return;
         }        
       },
+      delete: async(item) => {
+        await flarebase.store.db.collection('trainings').doc(item.id).delete().then(spat.modal.alert('削除しました'));
+      }, 
     },
     lists: {
       getById: async(id) => {
@@ -158,7 +160,7 @@
       update: async(item) => {
         var ref = flarebase.store.db.collection('lists').doc(item.id);
         try{
-          return ref.update({
+          ref.update({
             name: item.data.name,
             description: item.data.description,
             trainings : item.data.trainings,

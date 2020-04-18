@@ -14,8 +14,15 @@ page-list-single
               div.text-deepgray.fs8.px2(data-is='atom-logs-display', item='{training.data.log}')
               p.text-deepgray.fs8.px2(if='{!training.data.log}') なし
             i.material-icons.text-main.fs24(onclick='{deleteItem}') delete
-      div.fs28.font-impact.mb20 DESCRIPTIONS
-      div.p20.border.rounded-10.bw8.mb20.lh14 {item.data.description}
+      div.w-full.flex-between.f.fm
+        div.fs28.font-impact.mb20 DESCRIPTIONS
+        i.material-icons.fs20.text-main(onclick='{editDescription}', if='{!inEdit}') edit
+        div.cursor-pointer.fs16.text-main.bold(onclick='{cancel}', if='{inEdit}') 戻る
+      div.p20.border.rounded-10.bw8.mb20.lh14(if='{!inEdit}') {item.data.description}
+      div.w-full(if='{inEdit}')
+        textarea.p20.mb20.lh14.bg-white.input.w-full(value='{item.data.description}', ref='description')
+        div.cursor-pointer.bg-sub.f.fh.text-white.rounded-full.bold.w200.mxa.py10.mb20(onclick='{finishEdit}')
+          span 編集完了
 
 
   script.
@@ -86,10 +93,29 @@ page-list-single
         this.trainingSetUp();
         await app.store.lists.update(this.item);
         this.item = await this.setUpItem(this.id);
-        this.update()
+        this.update();
       });
     };
 
     this.toPageSingle = (e) => {
       app.routeful.go(`/training/${e.item.training.id}`);
+    };
+
+    this.editDescription = () => {
+      this.inEdit = true;
+      this.update();
+    };
+
+    this.finishEdit = async() => {
+      this.inEdit = false;
+      this.item.data.description = this.refs.description.value;
+      this.trainingSetUp();
+      await app.store.lists.update(this.item);
+      this.item = await this.setUpItem(this.id);
+      this.update();
+    };
+
+    this.cancel = () => {
+      this.inEdit = false;
+      this.update();
     };
