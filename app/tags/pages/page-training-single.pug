@@ -2,8 +2,19 @@ page-training-single
   div.f.flex-column
     module-header(title="{item.data.name}", back='{true}')
     div.px20.pt20.s-full.f.flex-column
-      img.mxa.w200.mb10(src='{item.data.image.url}')
-      div.fs12.lh14.mb20 {item.data.description}
+      img.mxa.w200.mb10(src='{item.data.image.url}', if='{!inEdit}')
+      div.w-full.mb20.text-center(if='{inEdit}')
+        img.s100(src='{base64 || item.data.image.url}')
+        label.w100.mxa
+          input.hide(type='file', onchange='{changeImage}', accept='image/*')
+          div.bg-deepgray.rounded-10.py10.f.fh
+            span.bold.text-white 画像を選択
+      div.bold.fs20.mb20 DESCRIPTION
+      div.fs16.lh14.mb20(if='{!inEdit}') {item.data.description}
+      textarea.w-full.input.mb20(value='{item.data.description}', ref='description', if='{inEdit}')
+      div.w-full.f.flex-between.mb20
+        button.button.primary.w200.mxa(onclick='{inEdit ? finish : edit}') {inEdit ? '完了' : '編集'}
+        button.button.bg-main.text-white.bold.w100.mxa(onclick='{delete}') 削除
       div.bold.fs20 LOG
       div.mxn20(data-is='module-chart', item='{logsToShow}', show='{item.logs}')
       form.w-full.f.fh(onsubmit='{setType}')
@@ -25,15 +36,6 @@ page-training-single
       div.border.bw6.rounded-10.p12.mb20.h200.overflow-y-scroll
         div.border-bottom(if='{log}', each='{log in logsToShow}')
           div.fs16(data-is='atom-logs-display', item='{log}', if='{log}')
-          //- div.fs18.f.w-full(if='{log.data.type === "normal" || log.data.showYear}')
-          //-   //- 年間表示の時だけ切替
-          //-   p.mr18 {log.data.showYear ? log.data.day : moment(+log.data.done_at).format('MM/DD')}
-          //-   p.mr6 {"avg." : log.data.showYear}{log.data.weight}kg
-          //-   p(if='{!log.data.showYear}') {log.data.rep}回×{log.data.set}セット
-          //- div.f.ft.w-full(if='{log.data.type === "customize"}')
-          //-   div.fs18.mr16 {moment(+log.data.done_at).format('MM/DD')}
-          //-   div.w-full.fs14
-          //-     div.mb2(each='{training in log.data.trainings}') {training.weight}kg × {training.rep}回
         div.s-full.f.fh(if='{!item.logs}')
           span まだありません。
 
@@ -48,7 +50,13 @@ page-training-single
     //- 仮の処理データ連携後実装
     this.on('show', async(e) => {
       this.selectType();
-      this.item = await app.store.trainings.get(e.opts.id);
+      this.id = e.opts.id;
+      await this.setUp();
+      this.update();
+    });
+
+    this.setUp = async() => {
+      this.item = await app.store.trainings.get(this.id);
       this.item.logs = await app.store.logs.getByTrainingId(this.item.id);
       if (this.item.logs) {
         //- 仮の処理momentobjに変換
@@ -65,8 +73,8 @@ page-training-single
           this.logsToShow = this.getLogs(this.refs.type.value);
         }
       }
-      this.update();
-    });
+    };
+
 
     this.selectType = () => {
       if (this.refs.type.value === 'month') {
@@ -179,3 +187,36 @@ page-training-single
       this.tags['module-chart'].mount();
     };
 
+    this.edit = () => {
+      this.inEdit = true;
+    };
+
+    this.changeImage = async(e) => {
+      if (!e.target.value || !e.target.files[0]) return;
+      var file = e.target.files[0];
+      this.base64 = await app.utils.fileToBase64(file);
+      if (!this.base64) return;
+      this.item.data.image = {
+        base64: this.base64,
+        file: file,
+      };
+      this.update();
+      e.target.value = '';
+    };
+
+    this.finish = async(e) => {
+      this.item.data.description = this.refs.description.value;
+      var url = await app.utils.uploadTrainingImageToStorage(this.item, 'trainings');
+      this.item.data.image = url;
+      await app.store.trainings.update(this.item);
+      this.setUp();
+      this.inEdit = false;
+      this.update();
+    };
+
+    this.delete = () => {
+      spat.modal.confirm('このトレーニングを削除しますか？').on('confirm', async() => {
+        await app.store.trainings.delete(this.item);
+        app.routeful.go('/');
+      });
+    };
