@@ -44,7 +44,7 @@
       // メアド/パスワードでアカウント作成
       async createUserWithEmailAndPassword(email, password) {
         try {
-          var res = await firebase.auth().createUserWithEmailAndPassword(email, password);;
+          var res = await firebase.auth().createUserWithEmailAndPassword(email, password);
           var data = this._normalizeResponse(res);
           return data;
         }
@@ -56,7 +56,7 @@
       },
       async signInWithEmailAndPassword(email, password) {
         try {
-          var res = await firebase.auth().signInWithEmailAndPassword(email, password);;
+          var res = await firebase.auth().signInWithEmailAndPassword(email, password);
           var data = this._normalizeResponse(res);
           return data;
         }

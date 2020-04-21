@@ -41,7 +41,20 @@
         });
       });
     }, 
-    uploadFile: () => {
+    uploadUserImageToStorage: (item) => {
+      var uid = firebase.auth().getUid()
+      return new Promise(async (resolve, reject) => {
+        let imageRef = firebase.storage().ref('users').child(uid).child('images').child(moment().format('X'));
+        imageRef.put(item).then(async (ss) => {
+          var url = await ss.ref.getDownloadURL();
+          resolve({
+            url: url,
+            snapshot: ss,
+          });
+        }).catch((err) => {
+          reject(err);
+        });
+      });
     },
 
     // 登録/ログインを表示
@@ -51,14 +64,16 @@
 
         modal.on('authed', async (e) => {
           spat.modal.alert('ログインしました');
-  
-          var user = await app.store.users.get();
 
-          // 未登録のユーザーだったらユーザーデータを上書きする
-          if (user.data.isAnonymous) {
+          // firestore のほうにもユーザーをセット
+          var user = await app.store.users.get();
+          var isNewSNS = e.providerId && !e.user.display_name;
+          // 新規だった場合は情報を登録
+          if (isNewSNS || e.isNewUser) {
             await user.doc.ref.set(e.user);
+            spat.modal.open('modal-user', {user: e.user});            
           }
-          
+
           modal.close();
         });
 

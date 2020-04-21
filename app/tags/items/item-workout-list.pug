@@ -16,7 +16,7 @@ item-workout-list
           div.f.w-full
             img.block.s30.mr20(src='{content.data.image.url}')
             div.s-full
-              div {content.data.name}
+              div.mb20 {content.data.name}
               div.text-deepgray.fs8.px2(data-is='atom-logs-display', item='{content.data.log}', if='{content.data.log}')
               div.w-full.fs8.text-deepgray.py4(if='{!content.data.log}') データなし
           div.s20.f.fh(class='bg-{content.selected ? "sub" : "deepgray"}', if='{opts.select}')

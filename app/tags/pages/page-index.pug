@@ -14,6 +14,7 @@ page-index
 
   script.
     this.on('mount', async () => {
+      if (firebase.auth().currentUser.isAnonymous) await app.utils.openAuthModal();
       this.todays_menu = [];
       this.datas = [];
       this.isFinished = false;
