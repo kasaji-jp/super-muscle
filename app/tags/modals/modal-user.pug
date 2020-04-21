@@ -3,8 +3,11 @@ modal-user(spat-animation='bottom')
     module-header(title='プロフィール編集')
     div.container
       form.px50.py32.text-center(onsubmit='{submit}')
-        img.s128.circle.object-fit-cover.mb16(src='{user.data.image}')
+        div.s-full.s128.circle.overflow-hidden.mb16.mxa.relative
+          input.opacity-0.block.s-full.absolute.trbl0(type='file', onchange='{changeImage}')
+          img.object-fit-cover.s-full.block(src='{getImage()}')
         input.border.p8.rounded-4.w-full.mb32(ref='display_name', placeholder='名前', required)
+        textarea.border.p8.rounded-4.w-full.mb32(ref='profile', placeholder='プロフィール', required)
         button.button.primary 更新
     div.homebar.bg-white.flex-fixed
   
@@ -16,20 +19,48 @@ modal-user(spat-animation='bottom')
   script.
     this.on('mount', async () => {
       this.user = await app.store.users.get();
-      this.refs.display_name.value = this.user.data.display_name || '';
+      this.refs.display_name.value = this.user.data ? (this.user.data.display_name || '') : '';
+      this.refs.profile.value = this.user.data ? (this.user.data.profile || '') : '';
       this.update();
     });
+
+    this.getImage = () => {
+      if (this.base64) return this.base64;
+      else if (this.user.data && this.user.data.image.url !== '' ) return this.user.data.image.url;
+      else return "/static/images/no_image.png";
+    };
 
     this.submit = async (e) => {
       e.preventDefault();
 
+      if (!this.flie) {
+        var url = {};
+        url.url = 'gs://super-muscle-2edec.appspot.com/users/no_image.png';
+      } else {
+        var url = await app.utils.uploadUserImageToStorage(this.file);
+      }
+
       await this.user.doc.ref.update({
         display_name: this.refs.display_name.value,
+        profile: this.refs.profile.value,
+        email: this.opts.user.email,
+        image: {url: url.url},
         updated_at: Date.now(),
       });
 
       await this.user.doc.ref.getWithRelation({cache:false});
       riot.update();
 
+      spat.modal.alert('登録しました');
+
       this.close();
+    };
+
+    this.changeImage = async(e) => {
+      if (!e.target.value || !e.target.files[0]) return;
+      this.file = e.target.files[0];
+      this.base64 = await app.utils.fileToBase64(this.file);
+      if (!this.base64) return;
+      this.update();
+      e.target.value = '';
     };
