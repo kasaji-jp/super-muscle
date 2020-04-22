@@ -45,7 +45,7 @@ page-calendar
 
   script.
     this.on('mount', async() => {
-      //- todo- 戻って登録もできる,ログあるところ表示
+      if (firebase.auth().currentUser.isAnonymous) await app.utils.openAuthModal();
       this.target = new Date();
       this.logs = await app.store.logs.getMine();
       this.setUp();

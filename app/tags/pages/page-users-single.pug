@@ -4,14 +4,16 @@ page-users-single(spat-animation="{is_mypage ? '' : 'slide'}")
     div.h-full.overflow-scroll
       //- header
       div.bg-primary.h32vh.relative
+        div.absolute.h50.px10.f.fh.t0.r0
+          div.material-icons.fs24.text-white(onclick='{openSettings}') settings
       div.container
         div.px32.mtn40.relative
           div.f.fh.mb16
-            img.object-fit-cover.circle.s80.bg-white.border.border-white.border-width-4.box-shadow(src='{user.data.image}')
+            img.object-fit-cover.circle.s80.bg-white.border.border-white.border-width-4.box-shadow(src='{user.data.image.url !== "" ? user.data.image.url : "/static/images/no_image.png"}')
           div.text-center.bold.mb16 {user.data.display_name || user.data.screen_name}
           p.mb32 {user.data.profile}
-          div.f.fh
-            button.button.primary(if='{is_me}', onclick='{editProfile}') プロフィール編集
+          div.f.fh.flex-column
+            button.button.primary.mb20(if='{is_me}', onclick='{editProfile}') プロフィール編集
             button.button.primary(if='{is_local}', onclick='{openAdmin}') 管理者ページ
 
     module-tabbar
@@ -25,7 +27,6 @@ page-users-single(spat-animation="{is_mypage ? '' : 'slide'}")
     }
 
   script.
-    
     this.on('show', async (e) => {
       this.is_local = location.hostname === 'localhost';
       if (e.opts.screen_name) {
@@ -56,4 +57,8 @@ page-users-single(spat-animation="{is_mypage ? '' : 'slide'}")
 
     this.openAdmin = () => {
       app.routeful.go('/admin');
+    };
+
+    this.openSettings = () => {
+      spat.modal.open('modal-settings');
     };

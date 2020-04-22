@@ -33,18 +33,16 @@ modal-user(spat-animation='bottom')
     this.submit = async (e) => {
       e.preventDefault();
 
-      if (!this.flie) {
-        var url = {};
-        url.url = 'gs://super-muscle-2edec.appspot.com/users/no_image.png';
-      } else {
+      if (this.flie) {
         var url = await app.utils.uploadUserImageToStorage(this.file);
       }
+      else var url = '';
 
       await this.user.doc.ref.update({
         display_name: this.refs.display_name.value,
         profile: this.refs.profile.value,
         email: this.opts.user.email,
-        image: {url: url.url},
+        image: {url: url.url || ''},
         updated_at: Date.now(),
       });
 

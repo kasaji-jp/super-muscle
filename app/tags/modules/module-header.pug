@@ -27,7 +27,8 @@ module-header
       typeof this.opts.close === 'function' ? this.opts.close() : spat.nav.back();
     };
 
-    this.openModal = () => {
+    this.openModal = async() => {
+      if (firebase.auth().currentUser.isAnonymous) await app.utils.openAuthModal();
       this.parent.trigger('openModal');
     };
     
