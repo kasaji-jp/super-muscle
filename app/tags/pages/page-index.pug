@@ -26,6 +26,11 @@ page-index
     });
 
     this.on('openModal', ()=> {
+      if (this.isFinished) {
+        spat.modal.alert('本日のトレーニングは完了しています。ログページに移動します。');
+        app.routeful.go('/calendar');
+        return;
+      }
       var modal = spat.modal.open('modal-menu-select', {contents: this.todays_menu});
       modal.on('add', (item) => {
         if (item.length > 1) {
