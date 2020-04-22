@@ -207,7 +207,7 @@
         return lists;
       },
       getByTrainingId: async(id) => {
-        var lists = await flarebase.store.db.collection('logs').where('training_id', '==', id).orderBy('done_at', 'asc').getWithRelation();
+        var lists = await flarebase.store.db.collection('logs').where('training_id', '==', id).where('user_id', '==', firebase.auth().getUid()).orderBy('done_at', 'asc').getWithRelation();
         return lists;
       },
       update: async(item) => {
