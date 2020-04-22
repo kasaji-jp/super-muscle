@@ -25,6 +25,7 @@ page-menu
     ];
 
     this.on('mount', async() => {
+      if (firebase.auth().currentUser.isAnonymous) await app.utils.openAuthModal();
       setTimeout(() => {
         this.BASE_WIDTH = target.offsetWidth;
       }, 512);
