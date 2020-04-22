@@ -1,6 +1,6 @@
 modal-new-edit(spat-animation='bottom')
   form.s-full.bg-maingray.f.flex-column(ref='modal', onsubmit='{add}')
-    div.w-full(data-is='module-header', title='リスト編集', close='{close}')
+    div.w-full(data-is='module-header', title='{opts.type === "training" ? "トレーニング" : "リスト"}編集', close='{close}')
     div.s-full.px30.py30.overflow-y-scroll
       div.fs28.bold.mb20 TITLE:
       input.input.w-full.mb40.bg-white(ref='title', placeholder='イカしたタイトルをつけよう', required)
