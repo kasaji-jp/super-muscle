@@ -3,6 +3,8 @@ item-workout-list
     div.bg-palegray.w-full.border.text-black.f.fm.py10.px20.relative.overflow-hidden(onclick='{toggleList}')
       div.absolute.trbl0.f.fh.bg-clearblack.z2(if='{opts.item.disabled}')
         span.text-white.fs18.bold 登録済み
+      div.absolute.trbl0.f.fh.bg-clearblack.z2(if='{opts.item.contents.length === 0}')
+        span.text-white.fs18.bold なし
       img.block.s30.mr40(src='{opts.item.image}', if='{opts.item.image}')
       div.fs18.bold {opts.item.label || opts.item.data.name}
       div.absolute.t0.r0.h-full.f.fh.px10.transition(if='{!opts.select || !opts.type}', class='rotate{open ? "-n90deg" : "90deg"}')
