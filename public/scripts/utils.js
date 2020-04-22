@@ -116,9 +116,9 @@
       }
     },
 
-    getTrainingByParts: async() => {
+    getTrainingOfficialByParts: async() => {
       //- リストに渡す用 部位ごとのトレーニングリストを作成
-      var trainingsAll = await app.store.trainings.getAll();
+      var trainingsAll = await app.store.trainings.getOfficial();
       var parts = app.utils.getBodyParts();
       var keys = Object.keys(parts);
       Object.values(parts).forEach( (part, i) => {
@@ -127,10 +127,31 @@
       return parts;
     },
 
-    getLists: async() => {
+    getMyTrainingsByParts: async() => {
+      //- リストに渡す用 部位ごとのトレーニングリストを作成 ログがなければ対象外に
+      var trainingsAll = await app.store.trainings.getOfficial();
+      await app.utils.putLog(trainingsAll);
+      trainingsAll = trainingsAll.filter(training => training.data.log);
+      var trainingsMine = await app.store.trainings.getMine();
+      // 公式のトレーニングにオリジナルのトレーニングを混ぜる
+      trainingsAll = trainingsAll.concat(trainingsMine);
+
+      var parts = app.utils.getBodyParts();
+      var keys = Object.keys(parts);
+      Object.values(parts).forEach( (part, i) => {
+        part.contents = trainingsAll.filter(training => training.data.parts === keys[i]);
+      });
+      return parts;
+    },
+
+    getMyLists: async() => {
       //- リストデータ作成
-      var trainingsAll = await app.store.trainings.getAll();
+      var trainingsAll = await app.store.trainings.getOfficial();
+      var myTraining = await app.store.trainings.getMine();
+      trainingsAll = trainingsAll.concat(myTraining);
       var lists = await app.store.lists.getDefault();
+      var myLists = await app.store.lists.getMine();
+      lists = lists.concat(myLists);
       lists.forEach(list => {
         list.data.trainings.forEach((listItem, i) => {
           var current = trainingsAll.find(training => training.id === listItem.id );

@@ -58,9 +58,12 @@
         var training = await flarebase.store.db.collection('trainings').doc(id).getWithRelation();
         return training;
       },
-      getAll: async() => {
-        var trainings = await flarebase.store.db.collection('trainings').orderBy('created_at', 'desc').getWithRelation();
-        // var trainings = await flarebase.store.db.collection('trainings').where('is_official', '==', true).orderBy('created_at', 'desc').getWithRelation();
+      getOfficial: async() => {
+        var trainings = await flarebase.store.db.collection('trainings').where('is_official', '==', true).orderBy('created_at', 'desc').getWithRelation();
+        return trainings;
+      },
+      getMine: async() => {
+        var trainings = await flarebase.store.db.collection('trainings').where('is_official', '==', false).where('user_id', '==', firebase.auth().getUid()).orderBy('created_at', 'desc').getWithRelation();
         return trainings;
       },
       getDefault: async() => {
@@ -77,6 +80,7 @@
             parts: item.data.parts,
             is_private: item.data.is_private || false,
             is_official: item.data.is_official || true,
+            user_id: firebase.auth().getUid(), 
             created_at: moment().format('x'),
             updated_at: moment().format('x'),
             image: '',
@@ -129,10 +133,12 @@
       getById: async(id) => {
         return await flarebase.store.db.collection('lists').doc(id).getWithRelation();
       },
-      // todo-友達のリストが変更になった時どうするか 
       getDefault: async() => {
         var lists = await flarebase.store.db.collection('lists').where('is_official', '==', true).orderBy('created_at', 'desc').getWithRelation();
-        // var trainings = await flarebase.store.db.collection('trainings').where('is_official', '==', true).orderBy('created_at', 'desc').getWithRelation();
+        return lists;
+      },
+      getMine: async() => {
+        var lists = await flarebase.store.db.collection('lists').where('is_official', '==', false).where('user_id', '==', firebase.auth().getUid()).orderBy('created_at', 'desc').getWithRelation();
         return lists;
       },
       post: async(item) => {
@@ -144,6 +150,7 @@
             trainings : item.data.trainings,
             is_private: item.data.is_private || false,
             is_official: item.data.is_official || true,
+            user_id: firebase.auth().getUid(),
             created_at: moment().format('x'),
             updated_at: moment().format('x'),
           })
@@ -184,6 +191,7 @@
     logs: {
       post: async(item) => {
         var ref = flarebase.store.db.collection('logs');
+        item.data.user_id = firebase.auth().getUid();
         try{
           await ref.add(item.data).then(spat.modal.alert('登録しました'));
         }
@@ -193,15 +201,10 @@
         }
       },
       getMine: async(item) => {
-        try {
-          // kari
-          var lists = await flarebase.store.db.collection('logs').orderBy('done_at', 'desc').getWithRelation({cache: false});
-          return lists;
-        }
-        catch (error) {
-          spat.modal.alert('更新に失敗しました');
-          return;
-        }
+        var uid = firebase.auth().getUid();
+        // kari
+        var lists = await flarebase.store.db.collection('logs').where('user_id', '==', uid).orderBy('done_at', 'desc').getWithRelation({cache: false});
+        return lists;
       },
       getByTrainingId: async(id) => {
         var lists = await flarebase.store.db.collection('logs').where('training_id', '==', id).orderBy('done_at', 'asc').getWithRelation();

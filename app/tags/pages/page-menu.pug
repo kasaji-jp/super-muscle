@@ -8,9 +8,9 @@ page-menu
       div.w-full.flex-fixed.f.flex-column(each='{page, i in pages}')
         div.text-center.mb30
           span.text-main.border-bottom.border-main.bw4.pb4.fw6 {page.title}
-        div.h-full.overflow-scroll.w-full(if='{i === 0}')
+        div.h-full.overflow-scroll.w-full.pb80(if='{i === 0}')
           div(data-is='item-workout-list', each='{item in trainings}', item='{item}')
-        div.h-full.overflow-scroll.w-full(if='{i === 1}')
+        div.h-full.overflow-scroll.w-full.pb80(if='{i === 1}')
           div(data-is='item-workout-list', each='{item in lists}', item='{item}', type='mylist')
     module-tabbar
 
@@ -48,8 +48,8 @@ page-menu
       });
 
       var indicator = spat.modal.indicator();
-      this.trainings = await app.utils.getTrainingByParts();
-      this.lists = await app.utils.getLists();
+      this.trainings = await app.utils.getMyTrainingsByParts();
+      this.lists = await app.utils.getMyLists();
       
       //- 上でとってきたデータにlog情報紐付け
       var promises = Object.values(this.trainings).map(part => {

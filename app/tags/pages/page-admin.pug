@@ -78,7 +78,7 @@ page-admin
     this.subcollections = ['trainings', 'lists', 'users'];
 
     this.on('mount', async() => {
-      this.items = await app.store.trainings.getAll();
+      this.items = await app.store.trainings.getOfficial();
       this.type = 'trainings';
       this.update();
     });
@@ -88,7 +88,7 @@ page-admin
       this.type = this.refs.type.value;
       var returnItems = () => {
         return {
-        'trainings': app.store.trainings.getAll(),
+        'trainings': app.store.trainings.getOfficial(),
         'lists': app.store.lists.getDefault(),
         'users': console.log('bbb'),
         }[this.type];
@@ -202,7 +202,7 @@ page-admin
     };
 
     this.getTrainingsAll = async() => {
-      var trainingTemp = await app.store.trainings.getAll();
+      var trainingTemp = await app.store.trainings.getOfficial();
       this.trainingsAll = trainingTemp.map(training => {
         return {id: training.id, name: training.data.name, checked: false};
       })
