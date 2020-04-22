@@ -14,7 +14,7 @@ item-training
             div.mr4 重量/回数:
             select.py4.px8.bg-softgray.rounded-4(ref='types', onchange='{update}')
               option(each='{type in types}', value='{type.value}', selected='{type.value === selectedType}') {type.name}
-          div.col6.f.fh
+          div.col6.f.fh(if='{opts.item.data.log}')
             div.mr4 前回比
             select.py4.px8.bg-softgray.rounded-4(ref='fromPrev', onchange='{autoInput}')
               option(value='normal', selected) ----
